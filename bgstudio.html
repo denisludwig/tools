@@ -236,40 +236,34 @@
     </details>
 
     <details>
-      <summary>Frosted Glass <span class="dot"></span></summary>
-      <div class="body">
-        <div class="toggle row" id="glassToggle"><span class="tk"></span> Glasfläche aktiv</div>
-        <div id="glassctl" style="display:none">
-          <div class="row"><label class="lab">Titel</label><input type="text" id="gtitle" value="Dein Titel"></div>
-          <div class="row"><label class="lab">Untertitel</label><input type="text" id="gsub" value="Untertitel oder Claim"></div>
-          <div class="row"><label class="lab">Breite <b id="gwv">46</b>%</label><input type="range" id="gw" min="20" max="92" value="46"></div>
-          <div class="row"><label class="lab">Höhe <b id="ghv">34</b>%</label><input type="range" id="gh" min="14" max="92" value="34"></div>
-          <div class="row"><label class="lab">Glas-Unschärfe <b id="gblurv">18</b></label><input type="range" id="gblur" min="2" max="60" value="18"></div>
-          <div class="row"><label class="lab">Tönung <b id="gtintv">14</b></label><input type="range" id="gtint" min="0" max="60" value="14"></div>
-          <div class="row"><label class="lab">Rundung <b id="gradv">26</b></label><input type="range" id="gradius" min="0" max="80" value="26"></div>
-          <div class="row"><label class="lab">Textgröße <b id="gfsv">58</b></label><input type="range" id="gfs" min="24" max="120" value="58"></div>
-          <div class="row grid2" style="margin-bottom:0"><div><label class="lab">Glas-Stil</label><div class="seg sm" id="gstyle"><button data-v="light" class="on">Hell</button><button data-v="dark">Dunkel</button></div></div><div><label class="lab">Textfarbe</label><input type="color" class="clr" id="gtextcol" value="#ffffff"></div></div>
-        </div>
-      </div>
-    </details>
-
-    <details>
       <summary>Content-Simulator <span class="dot"></span></summary>
       <div class="body">
         <div class="toggle row" id="ctToggle"><span class="tk"></span> Content anzeigen</div>
         <div id="ctctl" style="display:none">
-          <div class="row"><label class="lab">Layout</label><select id="ctLayout"><option value="title">Titelfolie</option><option value="centered">Titel zentriert</option><option value="kicker">Anstrich + Headline</option><option value="body">Überschrift + Mengentext</option><option value="headsubbody">Haupt + Unter + Text</option><option value="quote">Zitat</option><option value="lowerthird">Bauchbinde (Lower Third)</option></select></div>
+          <div class="row"><label class="lab">Layout</label><select id="ctLayout"><option value="title">Titelfolie</option><option value="centered">Titel zentriert</option><option value="bullets">Überschrift + Aufzählung</option><option value="body">Überschrift + Mengentext</option><option value="headsubbody">Haupt + Unter + Text</option><option value="quote">Zitat</option><option value="lowerthird">Bauchbinde (Lower Third)</option></select></div>
           <div class="row"><label class="lab">Bildteilung</label><div class="seg sm" id="ctSplit"><button data-v="none" class="on">keine</button><button data-v="left">links</button><button data-v="right">rechts</button><button data-v="top">oben</button><button data-v="bottom">unten</button></div></div>
           <div class="row"><label class="lab">Bildanteil <b id="ctSRv">45</b>%</label><input type="range" id="ctSplitRatio" min="20" max="70" value="45"></div>
           <div class="grid2"><button class="btn ghost" id="ctImgLoad">Bild laden</button><button class="btn ghost" id="ctImgRm" style="display:none">Bild entfernen</button></div>
-          <div class="row" style="margin-top:10px"><label class="lab">Anstrich / Kicker</label><input type="text" id="ctKicker" value="ANSTRICH"></div>
+          <div class="row" style="margin-top:10px"><label class="lab">Kicker / Label (Eyebrow)</label><input type="text" id="ctKicker" value="KICKER"></div>
           <div class="row"><label class="lab">Hauptüberschrift</label><input type="text" id="ctHead" value="Hauptüberschrift"></div>
           <div class="row"><label class="lab">Unterüberschrift</label><input type="text" id="ctSub" value="Eine prägnante Unterzeile"></div>
           <div class="row"><label class="lab">Mengentext</label><textarea id="ctBody" rows="3" style="resize:vertical">Hier steht ein Absatz Mengentext, der zeigt, wie sich der Hintergrund mit echtem Inhalt verhält und ob die Lesbarkeit stimmt.</textarea></div>
+          <div class="row"><label class="lab">Aufzählung (eine pro Zeile)</label><textarea id="ctList" rows="3" style="resize:vertical">Erster Punkt der Aufzählung
+Ein zweiter wichtiger Aspekt
+Und ein dritter Gedanke dazu</textarea></div>
+          <div class="row"><label class="lab">Aufzählungszeichen</label><div class="seg sm" id="ctBullet"><button data-v="•" class="on">•</button><button data-v="–">–</button><button data-v="▸">▸</button><button data-v="◆">◆</button><button data-v="✓">✓</button><button data-v="1.">1.</button><button data-v="keine">ohne</button></div></div>
+          <div class="row"><label class="lab">Lorem ipsum</label><div class="seg sm" id="ctLorem"><button data-v="kurz">kurz</button><button data-v="mittel" class="on">mittel</button><button data-v="lang">lang</button></div></div>
+          <div class="grid2"><button class="btn ghost" id="ctLoremBody">→ Mengentext füllen</button><button class="btn ghost" id="ctLoremList">→ Aufzählung füllen</button></div>
           <div class="row"><label class="lab">Ausrichtung</label><div class="seg sm" id="ctAlign"><button data-v="left" class="on">links</button><button data-v="center">zentriert</button><button data-v="right">rechts</button></div></div>
           <div class="row grid2"><div><label class="lab">Textfarbe</label><input type="color" class="clr" id="ctColor" value="#ffffff"></div><div><label class="lab">Akzent</label><input type="color" class="clr" id="ctAccent" value="#2d9cff"></div></div>
-          <div class="row"><label class="lab">Lesehilfe-Hintergrund</label><div class="seg sm" id="ctScrim"><button data-v="none" class="on">keine</button><button data-v="gradient">Verlauf</button><button data-v="panel">Fläche</button></div></div>
-          <div class="row grid2"><div><label class="lab">Rand <b id="ctMv">7</b></label><input type="range" id="ctMargin" min="0" max="18" value="7"></div><div><label class="lab">Textgröße <b id="ctScv">100</b></label><input type="range" id="ctScale" min="50" max="180" value="100"></div></div>
+          <div class="row"><label class="lab">Lesehilfe-Hintergrund</label><div class="seg sm" id="ctScrim"><button data-v="none" class="on">keine</button><button data-v="gradient">Verlauf</button><button data-v="panel">Fläche</button><button data-v="glass">Glas</button></div></div>
+          <div class="row grid2"><div><label class="lab">Stärke <b id="ctScrimStrv">50</b></label><input type="range" id="ctScrimStr" min="0" max="100" value="50"></div><div><label class="lab">Glas-Unschärfe <b id="ctScrimBlurv">18</b></label><input type="range" id="ctScrimBlur" min="2" max="60" value="18"></div></div>
+          <div class="row"><label class="lab">Lesehilfe-Rundung <b id="ctScrimRadv">26</b></label><input type="range" id="ctScrimRad" min="0" max="80" value="26"></div>
+          <div class="row grid2"><div><label class="lab">Rand oben <b id="ctMTv">7</b></label><input type="range" id="ctMT" min="0" max="25" value="7"></div><div><label class="lab">Rand unten <b id="ctMBv">7</b></label><input type="range" id="ctMB" min="0" max="25" value="7"></div></div>
+          <div class="row grid2"><div><label class="lab">Rand links <b id="ctMLv">7</b></label><input type="range" id="ctML" min="0" max="25" value="7"></div><div><label class="lab">Rand rechts <b id="ctMRv">7</b></label><input type="range" id="ctMR" min="0" max="25" value="7"></div></div>
+          <div class="toggle row on" id="ctReact"><span class="tk"></span> Auf Header/Footer reagieren</div>
+          <div class="row"><label class="lab">Header/Footer-Abstand <b id="ctHFv">12</b></label><input type="range" id="ctHFsafe" min="0" max="30" value="12"></div>
+          <div class="row"><label class="lab">Textgröße <b id="ctScv">100</b></label><input type="range" id="ctScale" min="50" max="180" value="100"></div>
           <div class="toggle row" id="ctSafe" style="margin-bottom:0"><span class="tk"></span> Hilfslinien (nur Vorschau)</div>
           <input type="file" id="ctImgFile" accept="image/*" hidden>
         </div>
@@ -363,7 +357,7 @@ const S={ratio:[16,9],meshMode:'fluid',paletteIdx:0,base:PALETTES[0].base,points
   bokehOn:false,bokehCount:28,bokehSize:60,bokehSizeVar:.6,bokehBlur:6,bokehOpacity:.55,bokehColor:'palette',bokehBlend:'screen',bokehSeed:5,bokehImg:null,
   glass:false,gtitle:'Dein Titel',gsub:'Untertitel oder Claim',gx:.5,gy:.5,gw:.46,gh:.34,gblur:18,gtint:14,gradius:26,gfs:58,gstyle:'light',gtextcol:'#ffffff',
   grain:.08,vig:.16,master:1,ovOn:false,ovMode:'color',ovColor:'#ffffff',ovL:0,ovR:0,ovT:0,ovB:0,ovInt:1,
-  ctOn:false,ctLayout:'title',ctSplit:'none',ctSplitRatio:.45,ctImg:null,ctKicker:'ANSTRICH',ctHead:'Hauptüberschrift',ctSub:'Eine prägnante Unterzeile',ctBody:'Hier steht ein Absatz Mengentext, der zeigt, wie sich der Hintergrund mit echtem Inhalt verhält und ob die Lesbarkeit stimmt.',ctAlign:'left',ctColor:'#ffffff',ctAccent:'#2d9cff',ctScrim:'none',ctMargin:.07,ctScale:1,ctSafe:false,_dpr:1};
+  ctOn:false,ctLayout:'title',ctSplit:'none',ctSplitRatio:.45,ctImg:null,ctKicker:'KICKER',ctList:['Erster Punkt der Aufzählung','Ein zweiter wichtiger Aspekt','Und ein dritter Gedanke dazu'].join(String.fromCharCode(10)),ctBullet:'•',ctHead:'Hauptüberschrift',ctSub:'Eine prägnante Unterzeile',ctBody:'Hier steht ein Absatz Mengentext, der zeigt, wie sich der Hintergrund mit echtem Inhalt verhält und ob die Lesbarkeit stimmt.',ctAlign:'left',ctColor:'#ffffff',ctAccent:'#2d9cff',ctScrim:'none',ctScrimStr:.5,ctScrimBlur:18,ctScrimRad:26,ctReact:true,ctHFsafe:.12,ctMT:.07,ctMB:.07,ctML:.07,ctMR:.07,ctScale:1,ctSafe:false,_dpr:1};
 const BASEW=1600;
 let SAVED=[];
 
@@ -469,11 +463,10 @@ function drawAll(ctx,w,h){
   if(S.bokehOn)drawBokeh(ctx,w,h,s);
   if(S.grain>0)drawGrain(ctx,w,h);
   if(S.vig>0){const g=ctx.createRadialGradient(w/2,h/2,Math.min(w,h)*.25,w/2,h/2,Math.max(w,h)*.72);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,`rgba(0,0,0,${S.vig})`);ctx.fillStyle=g;ctx.fillRect(0,0,w,h);}
-  if(S.hdrImg&&S.hdrOn)drawOverlay(ctx,w,h,S.hdrImg,'tl',S.hdrOp);
-  if(S.ftrImg&&S.ftrOn)drawOverlay(ctx,w,h,S.ftrImg,'br',S.ftrOp);
-  if(S.glass)drawGlass(ctx,w,h,s);
   if(S.ovOn)drawOverall(ctx,w,h);
   if(S.ctOn)drawContent(ctx,w,h,s);
+  if(S.hdrImg&&S.hdrOn)drawOverlay(ctx,w,h,S.hdrImg,'tl',S.hdrOp);
+  if(S.ftrImg&&S.ftrOn)drawOverlay(ctx,w,h,S.ftrImg,'br',S.ftrOp);
 }
 function fitCover(iw,ih,w,h){const r=Math.max(w/iw,h/ih);return{x:(w-iw*r)/2,y:(h-ih*r)/2,w:iw*r,h:ih*r};}
 function drawPhoto(ctx,w,h,s){const o=fitCover(S.photo.width,S.photo.height,w,h);ctx.save();ctx.globalAlpha=S.popacity;ctx.globalCompositeOperation=S.photoBlend;
@@ -519,38 +512,49 @@ function ctFont(type,size){if(type==='kicker')return `700 ${size}px "Space Mono"
 function ctWrap(ctx,text,maxw){const words=String(text).split(' ');let lines=[],cur='';words.forEach(wd=>{const t=cur?cur+' '+wd:wd;if(ctx.measureText(t).width>maxw&&cur){lines.push(cur);cur=wd;}else cur=t;});if(cur)lines.push(cur);return lines;}
 function ctScrimCol(a){const c=hex2rgb(S.ctColor);const lum=(0.299*c[0]+0.587*c[1]+0.114*c[2])/255;return lum>0.5?`rgba(0,0,0,${a})`:`rgba(255,255,255,${a})`;}
 function drawSplitImage(ctx,x,y,w2,h2,s){if(S.ctImg){const o=fitCover(S.ctImg.width,S.ctImg.height,w2,h2);ctx.save();ctx.beginPath();ctx.rect(x,y,w2,h2);ctx.clip();ctx.drawImage(S.ctImg,x+o.x,y+o.y,o.w,o.h);ctx.restore();}else{ctx.save();ctx.fillStyle='rgba(127,140,170,0.18)';ctx.fillRect(x,y,w2,h2);ctx.strokeStyle='rgba(255,255,255,0.22)';ctx.lineWidth=Math.max(1,1.5*s);ctx.strokeRect(x+1,y+1,w2-2,h2-2);ctx.fillStyle='rgba(255,255,255,0.26)';ctx.beginPath();ctx.arc(x+w2*0.36,y+h2*0.4,Math.min(w2,h2)*0.05,0,7);ctx.fill();ctx.beginPath();ctx.moveTo(x+w2*0.2,y+h2*0.74);ctx.lineTo(x+w2*0.44,y+h2*0.5);ctx.lineTo(x+w2*0.58,y+h2*0.64);ctx.lineTo(x+w2*0.74,y+h2*0.44);ctx.lineTo(x+w2*0.84,y+h2*0.56);ctx.lineTo(x+w2*0.84,y+h2*0.78);ctx.lineTo(x+w2*0.2,y+h2*0.78);ctx.closePath();ctx.fill();ctx.restore();}}
+function ctRegion(w,h){let l=S.ctML*w,r=S.ctMR*w,t=S.ctMT*h,b=S.ctMB*h;if(S.ctReact){if(S.hdrImg&&S.hdrOn)t+=S.ctHFsafe*h;if(S.ftrImg&&S.ftrOn)b+=S.ctHFsafe*h;}let tx=l,ty=t,tw=w-l-r,th=h-t-b;const rr=S.ctSplitRatio;if(S.ctSplit==='left'){tx=w*rr+l;tw=w-w*rr-l-r;}else if(S.ctSplit==='right'){tw=w-w*rr-l-r;}else if(S.ctSplit==='top'){ty=h*rr+t;th=h-h*rr-t-b;}else if(S.ctSplit==='bottom'){th=h-h*rr-t-b;}return{tx,ty,tw:Math.max(40,tw),th:Math.max(40,th)};}
+function ctBulletItems(){return String(S.ctList||'').split(String.fromCharCode(10)).map(x=>x.trim()).filter(Boolean);}
+function drawScrim(ctx,w,h,s,L){if(S.ctScrim==='none')return;const str=S.ctScrimStr;
+  if(S.ctScrim==='gradient'){const g=ctx.createLinearGradient(0,0,0,h);if(L.vAnchor==='top'){g.addColorStop(0,ctScrimCol(str));g.addColorStop(.55,ctScrimCol(0));g.addColorStop(1,ctScrimCol(0));}else if(L.vAnchor==='center'){g.addColorStop(0,ctScrimCol(0));g.addColorStop(.5,ctScrimCol(str));g.addColorStop(1,ctScrimCol(0));}else{g.addColorStop(0,ctScrimCol(0));g.addColorStop(.45,ctScrimCol(0));g.addColorStop(1,ctScrimCol(Math.min(1,str*1.15)));}ctx.save();ctx.fillStyle=g;ctx.fillRect(0,0,w,h);ctx.restore();return;}
+  const pad=Math.max(12*s,0.02*h);const px=L.align==='center'?L.ax-L.bw/2:L.align==='right'?L.ax-L.bw:L.ax;const rx=px-pad,ry=L.y-pad,rw=L.bw+2*pad,rh=L.total+2*pad,rad=S.ctScrimRad*s;const c=hex2rgb(S.ctColor),lum=(0.299*c[0]+0.587*c[1]+0.114*c[2])/255;
+  if(S.ctScrim==='glass'){const snap=document.createElement('canvas');snap.width=w;snap.height=h;snap.getContext('2d').drawImage(ctx.canvas,0,0);ctx.save();roundRect(ctx,rx,ry,rw,rh,rad);ctx.clip();ctx.filter=`blur(${S.ctScrimBlur*s}px)`;ctx.drawImage(snap,0,0);ctx.filter='none';const tc=lum>0.5?'8,16,26':'255,255,255';ctx.fillStyle=`rgba(${tc},${str*0.5})`;ctx.fillRect(rx,ry,rw,rh);const sh=ctx.createLinearGradient(rx,ry,rx,ry+rh);sh.addColorStop(0,`rgba(255,255,255,${lum>0.5?.12:.2})`);sh.addColorStop(.5,'rgba(255,255,255,0)');ctx.fillStyle=sh;ctx.fillRect(rx,ry,rw,rh);ctx.restore();ctx.save();roundRect(ctx,rx+.5,ry+.5,rw-1,rh-1,rad);ctx.lineWidth=1.2*s;ctx.strokeStyle=`rgba(255,255,255,${lum>0.5?.3:.22})`;ctx.stroke();ctx.restore();}
+  else{ctx.save();roundRect(ctx,rx,ry,rw,rh,rad);ctx.fillStyle=ctScrimCol(str);ctx.fill();ctx.restore();}}
+const LOREM='lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua enim ad minim veniam quis nostrud exercitation ullamco laboris nisi aliquip ex ea commodo consequat duis aute irure voluptate velit esse cillum eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum'.split(' ');
+function loremSent(n){let w=[];for(let i=0;i<n;i++)w.push(LOREM[Math.floor(Math.random()*LOREM.length)]);let str=w.join(' ');return str.charAt(0).toUpperCase()+str.slice(1)+'.';}
+function loremPara(n){let a=[];for(let i=0;i<n;i++)a.push(loremSent(6+Math.floor(Math.random()*8)));return a.join(' ');}
+function loremItems(n){let a=[];for(let i=0;i<n;i++)a.push(loremSent(3+Math.floor(Math.random()*4)).replace(/\.$/,''));return a;}
 function drawContent(ctx,w,h,s){
-  const m=S.ctMargin*Math.min(w,h);let tx=m,ty=m,tw=w-2*m,th=h-2*m;
-  if(S.ctSplit!=='none'){const r=S.ctSplitRatio;if(S.ctSplit==='left'){drawSplitImage(ctx,0,0,w*r,h,s);tx=w*r+m;tw=w-w*r-2*m;}else if(S.ctSplit==='right'){drawSplitImage(ctx,w-w*r,0,w*r,h,s);tx=m;tw=w-w*r-2*m;}else if(S.ctSplit==='top'){drawSplitImage(ctx,0,0,w,h*r,s);ty=h*r+m;th=h-h*r-2*m;}else{drawSplitImage(ctx,0,h-h*r,w,h*r,s);ty=m;th=h-h*r-2*m;}}
-  tw=Math.max(40,tw);th=Math.max(40,th);
+  if(S.ctSplit!=='none'){const r=S.ctSplitRatio;if(S.ctSplit==='left')drawSplitImage(ctx,0,0,w*r,h,s);else if(S.ctSplit==='right')drawSplitImage(ctx,w-w*r,0,w*r,h,s);else if(S.ctSplit==='top')drawSplitImage(ctx,0,0,w,h*r,s);else drawSplitImage(ctx,0,h-h*r,w,h*r,s);}
+  const reg=ctRegion(w,h),tx=reg.tx,ty=reg.ty,tw=reg.tw,th=reg.th;
   const H=h,sc=S.ctScale,col=S.ctColor,accent=S.ctAccent,L=S.ctLayout;const blocks=[];const add=(text,type,rel,o)=>{if(text!=null&&text!=='')blocks.push(Object.assign({text,type,size:rel*H*sc},o||{}));};
   let vAnchor='bottom',align=S.ctAlign;
   if(L==='title'){add(S.ctKicker,'kicker',.02,{accent:1});add(S.ctHead,'head',.085);add(S.ctSub,'sub',.03);}
   else if(L==='centered'){add(S.ctKicker,'kicker',.02,{accent:1});add(S.ctHead,'head',.09);add(S.ctSub,'sub',.03);vAnchor='center';align='center';}
-  else if(L==='kicker'){add(S.ctKicker||'ANSTRICH','kicker',.024,{accent:1});add(S.ctHead,'head',.07);}
+  else if(L==='bullets'){add(S.ctKicker,'kicker',.018,{accent:1});add(S.ctHead,'head',.058);ctBulletItems().forEach(it=>add(it,'bullet',.026,{bullet:1}));vAnchor='top';}
   else if(L==='body'){add(S.ctHead,'head',.05);add(S.ctSub,'sub',.026);add(S.ctBody,'body',.022);vAnchor='top';}
   else if(L==='headsubbody'){add(S.ctKicker,'kicker',.018,{accent:1});add(S.ctHead,'head',.056);add(S.ctSub,'sub',.028);add(S.ctBody,'body',.02);vAnchor='center';}
   else if(L==='quote'){add('„'+(S.ctBody||S.ctHead)+'“','head',.05);add(S.ctSub?'— '+S.ctSub:'','sub',.024);vAnchor='center';align='center';}
   else if(L==='lowerthird'){add(S.ctHead,'head',.042);add(S.ctSub,'sub',.024);}
   const gap=0.018*H*sc;
-  blocks.forEach(b=>{ctx.font=ctFont(b.type,b.size);const txt=b.type==='kicker'?String(b.text).toUpperCase():b.text;b.lines=ctWrap(ctx,txt,tw);b.lh=b.size*(b.type==='body'?1.42:1.1);b.bh=b.lines.length*b.lh;b.adv=b.bh+(b.accent?b.size*1.0:0);b.w=Math.max(0,...b.lines.map(l=>ctx.measureText(l).width));});
+  const numbered=(S.ctBullet==='1.');let bn=0;
+  blocks.forEach(b=>{if(b.bullet){bn++;b.glyph=numbered?(bn+'.'):(S.ctBullet==='keine'?'':S.ctBullet);b.indent=b.glyph?b.size*1.4:0;}ctx.font=ctFont(b.type,b.size);const txt=b.type==='kicker'?String(b.text).toUpperCase():b.text;b.lines=ctWrap(ctx,txt,Math.max(20,tw-(b.indent||0)));b.lh=b.size*(b.type==='body'?1.42:b.bullet?1.3:1.1);b.bh=b.lines.length*b.lh;b.adv=b.bh+(b.accent?b.size*1.0:0)+(b.bullet?b.size*0.32:0);b.w=Math.max(0,...b.lines.map(l=>ctx.measureText(l).width))+(b.indent||0);});
   const total=blocks.reduce((a,b)=>a+b.adv,0)+gap*Math.max(0,blocks.length-1);
   let y=vAnchor==='top'?ty:vAnchor==='center'?ty+(th-total)/2:ty+th-total;
   const ax=align==='center'?tx+tw/2:align==='right'?tx+tw:tx;
   const bw=Math.max(40,...blocks.map(b=>b.w));
-  if(S.ctScrim==='gradient'){const g=ctx.createLinearGradient(0,0,0,h);if(vAnchor==='top'){g.addColorStop(0,ctScrimCol(.6));g.addColorStop(.55,ctScrimCol(0));g.addColorStop(1,ctScrimCol(0));}else if(vAnchor==='center'){g.addColorStop(0,ctScrimCol(0));g.addColorStop(.5,ctScrimCol(.5));g.addColorStop(1,ctScrimCol(0));}else{g.addColorStop(0,ctScrimCol(0));g.addColorStop(.45,ctScrimCol(0));g.addColorStop(1,ctScrimCol(.62));}ctx.save();ctx.fillStyle=g;ctx.fillRect(0,0,w,h);ctx.restore();}
-  else if(S.ctScrim==='panel'){const pad=Math.max(12*s,0.02*h);const px=align==='center'?ax-bw/2:align==='right'?ax-bw:ax;ctx.save();roundRect(ctx,px-pad,y-pad,bw+2*pad,total+2*pad,Math.max(6,0.014*h));ctx.fillStyle=ctScrimCol(.5);ctx.fill();ctx.restore();}
+  drawScrim(ctx,w,h,s,{y,total,ax,bw,align,vAnchor});
   ctx.save();ctx.textAlign=align;ctx.textBaseline='top';
   blocks.forEach(b=>{
     if(b.accent){ctx.save();ctx.strokeStyle=accent;ctx.lineWidth=Math.max(2,3*s);const lw2=b.size*1.7;const lx=align==='center'?ax-lw2/2:align==='right'?ax-lw2:ax;ctx.beginPath();ctx.moveTo(lx,y+b.size*0.35);ctx.lineTo(lx+lw2,y+b.size*0.35);ctx.stroke();ctx.restore();y+=b.size*1.0;}
-    ctx.font=ctFont(b.type,b.size);ctx.fillStyle=b.type==='kicker'?accent:col;const hasLS=('letterSpacing'in ctx);if(b.type==='kicker'&&hasLS)ctx.letterSpacing=(b.size*0.12)+'px';
-    b.lines.forEach((ln,i)=>ctx.fillText(ln,ax,y+i*b.lh));
+    ctx.font=ctFont(b.type,b.size);const hasLS=('letterSpacing'in ctx);if(b.type==='kicker'&&hasLS)ctx.letterSpacing=(b.size*0.12)+'px';
+    if(b.bullet){const gx0=align==='center'?ax-b.w/2:align==='right'?ax-b.w:ax;ctx.save();ctx.textAlign='left';if(b.glyph){ctx.fillStyle=accent;ctx.fillText(b.glyph,gx0,y);}ctx.fillStyle=col;b.lines.forEach((ln,i)=>ctx.fillText(ln,gx0+(b.indent||0),y+i*b.lh));ctx.restore();}
+    else{ctx.fillStyle=b.type==='kicker'?accent:col;b.lines.forEach((ln,i)=>ctx.fillText(ln,ax,y+i*b.lh));}
     if(hasLS)ctx.letterSpacing='0px';
-    y+=b.bh+gap;
+    y+=b.bh+gap+(b.bullet?b.size*0.32:0);
   });
   ctx.restore();
 }
-function drawGuides(ctx,w,h,dpr){const m=S.ctMargin*Math.min(w,h);ctx.save();ctx.strokeStyle='rgba(45,156,255,0.75)';ctx.lineWidth=1*dpr;ctx.setLineDash([6*dpr,5*dpr]);ctx.strokeRect(m,m,w-2*m,h-2*m);if(S.ctSplit!=='none'){const r=S.ctSplitRatio;ctx.beginPath();if(S.ctSplit==='left'){ctx.moveTo(w*r,0);ctx.lineTo(w*r,h);}else if(S.ctSplit==='right'){ctx.moveTo(w-w*r,0);ctx.lineTo(w-w*r,h);}else if(S.ctSplit==='top'){ctx.moveTo(0,h*r);ctx.lineTo(w,h*r);}else{ctx.moveTo(0,h-h*r);ctx.lineTo(w,h-h*r);}ctx.stroke();}ctx.restore();}
+function drawGuides(ctx,w,h,dpr){let l=S.ctML*w,r=S.ctMR*w,t=S.ctMT*h,b=S.ctMB*h;if(S.ctReact){if(S.hdrImg&&S.hdrOn)t+=S.ctHFsafe*h;if(S.ftrImg&&S.ftrOn)b+=S.ctHFsafe*h;}ctx.save();ctx.strokeStyle='rgba(45,156,255,0.75)';ctx.lineWidth=1*dpr;ctx.setLineDash([6*dpr,5*dpr]);ctx.strokeRect(l,t,w-l-r,h-t-b);if(S.ctSplit!=='none'){const r2=S.ctSplitRatio;ctx.beginPath();if(S.ctSplit==='left'){ctx.moveTo(w*r2,0);ctx.lineTo(w*r2,h);}else if(S.ctSplit==='right'){ctx.moveTo(w-w*r2,0);ctx.lineTo(w-w*r2,h);}else if(S.ctSplit==='top'){ctx.moveTo(0,h*r2);ctx.lineTo(w,h*r2);}else{ctx.moveTo(0,h-h*r2);ctx.lineTo(w,h-h*r2);}ctx.stroke();}ctx.restore();}
 /* ================= PREVIEW ================= */
 const view=$('#view'),vctx=view.getContext('2d');let raf=false;
 function draw(){if(raf)return;raf=true;requestAnimationFrame(()=>{raf=false;
@@ -636,10 +640,6 @@ $('#halfFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const img=new
 $('#halfRm').onclick=()=>{S.halfImg=null;$('#halfRm').style.display='none';$('#halfFile').value='';draw();};
 fillBlend($('#rblend'),S.rasterBlend);$('#rblend').onchange=e=>{S.rasterBlend=e.target.value;draw();};
 
-const gt=$('#glassToggle');gt.onclick=()=>{S.glass=!S.glass;gt.classList.toggle('on',S.glass);$('#glassctl').style.display=S.glass?'block':'none';draw();};
-$('#gtitle').oninput=e=>{S.gtitle=e.target.value;draw();};$('#gsub').oninput=e=>{S.gsub=e.target.value;draw();};
-slide('gw','gw','gwv',v=>v/100);slide('gh','gh','ghv',v=>v/100);slide('gblur','gblur','gblurv');slide('gtint','gtint','gtintv');slide('gradius','gradius','gradv');slide('gfs','gfs','gfsv');
-$$('#gstyle button').forEach(b=>b.onclick=()=>{S.gstyle=b.dataset.v;$$('#gstyle button').forEach(x=>x.classList.toggle('on',x===b));draw();});$('#gtextcol').oninput=e=>{S.gtextcol=e.target.value;draw();};
 const ctTog=$('#ctToggle');ctTog.onclick=()=>{S.ctOn=!S.ctOn;ctTog.classList.toggle('on',S.ctOn);$('#ctctl').style.display=S.ctOn?'block':'none';draw();};
 $('#ctLayout').onchange=e=>{S.ctLayout=e.target.value;draw();};
 $$('#ctSplit button').forEach(b=>b.onclick=()=>{S.ctSplit=b.dataset.v;$$('#ctSplit button').forEach(x=>x.classList.toggle('on',x===b));draw();});
@@ -648,7 +648,15 @@ $('#ctKicker').oninput=e=>{S.ctKicker=e.target.value;draw();};$('#ctHead').oninp
 $$('#ctAlign button').forEach(b=>b.onclick=()=>{S.ctAlign=b.dataset.v;$$('#ctAlign button').forEach(x=>x.classList.toggle('on',x===b));draw();});
 $('#ctColor').oninput=e=>{S.ctColor=e.target.value;draw();};$('#ctAccent').oninput=e=>{S.ctAccent=e.target.value;draw();};
 $$('#ctScrim button').forEach(b=>b.onclick=()=>{S.ctScrim=b.dataset.v;$$('#ctScrim button').forEach(x=>x.classList.toggle('on',x===b));draw();});
-slide('ctMargin','ctMargin','ctMv',v=>v/100);slide('ctScale','ctScale','ctScv',v=>v/100);
+slide('ctScrimStr','ctScrimStr','ctScrimStrv',v=>v/100);slide('ctScrimBlur','ctScrimBlur','ctScrimBlurv');slide('ctScrimRad','ctScrimRad','ctScrimRadv');
+slide('ctMT','ctMT','ctMTv',v=>v/100);slide('ctMB','ctMB','ctMBv',v=>v/100);slide('ctML','ctML','ctMLv',v=>v/100);slide('ctMR','ctMR','ctMRv',v=>v/100);
+const ctReactTg=$('#ctReact');ctReactTg.onclick=()=>{S.ctReact=!S.ctReact;ctReactTg.classList.toggle('on',S.ctReact);draw();};
+slide('ctHFsafe','ctHFsafe','ctHFv',v=>v/100);slide('ctScale','ctScale','ctScv',v=>v/100);
+$('#ctList').oninput=e=>{S.ctList=e.target.value;draw();};
+$$('#ctBullet button').forEach(b=>b.onclick=()=>{S.ctBullet=b.dataset.v;$$('#ctBullet button').forEach(x=>x.classList.toggle('on',x===b));draw();});
+let loremLen='mittel';$$('#ctLorem button').forEach(b=>b.onclick=()=>{loremLen=b.dataset.v;$$('#ctLorem button').forEach(x=>x.classList.toggle('on',x===b));});
+$('#ctLoremBody').onclick=()=>{S.ctBody=loremPara({kurz:1,mittel:2,lang:4}[loremLen]);$('#ctBody').value=S.ctBody;draw();};
+$('#ctLoremList').onclick=()=>{S.ctList=loremItems({kurz:3,mittel:4,lang:6}[loremLen]).join(String.fromCharCode(10));$('#ctList').value=S.ctList;draw();};
 const ctSafeTg=$('#ctSafe');ctSafeTg.onclick=()=>{S.ctSafe=!S.ctSafe;ctSafeTg.classList.toggle('on',S.ctSafe);draw();};
 $('#ctImgLoad').onclick=()=>$('#ctImgFile').click();
 $('#ctImgFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const img=new Image();img.onload=()=>{S.ctImg=img;$('#ctImgRm').style.display='block';draw();};img.src=URL.createObjectURL(f);};
@@ -698,9 +706,9 @@ $('#bokehRm').onclick=()=>{S.bokehImg=null;$('#bokehRm').style.display='none';$(
 /* --- stile speichern --- */
 function store(){try{localStorage.setItem('bgstudio_styles',JSON.stringify(SAVED));}catch(e){}}
 function loadStore(){try{const v=localStorage.getItem('bgstudio_styles');if(v)SAVED=JSON.parse(v)||[];}catch(e){SAVED=[];}}
-const STYLEKEYS=['ratio','meshMode','paletteIdx','base','points','spread','seed','colorSource','warp','wscale','photoMode','blur','popacity','photoBlend','autoMood','duoLow','duoHigh','rtype','rsize','ropacity','rangle','rcolor','rasterBlend','rasterX','rasterY','half3','halfC1','halfC2','halfC3','halfOffset','halfFocusX','halfFocusY','halfInvert','synthOn','synthType','synthDensity','synthScale','synthWidth','synthColor','synthBlend','synthOpacity','synthSeed','synthX','synthY','flowLen','flowArr','bokehOn','bokehCount','bokehSize','bokehSizeVar','bokehBlur','bokehOpacity','bokehColor','bokehBlend','bokehSeed','glass','gtitle','gsub','gx','gy','gw','gh','gblur','gtint','gradius','gfs','gstyle','gtextcol','grain','vig','master','bandMain','bandShadow','hdrSVG','hdrOn','hdrOp','ftrSVG','ftrOn','ftrOp','ovOn','ovMode','ovColor','ovL','ovR','ovT','ovB','ovInt','ctOn','ctLayout','ctSplit','ctSplitRatio','ctKicker','ctHead','ctSub','ctBody','ctAlign','ctColor','ctAccent','ctScrim','ctMargin','ctScale','ctSafe'];
+const STYLEKEYS=['ratio','meshMode','paletteIdx','base','points','spread','seed','colorSource','warp','wscale','photoMode','blur','popacity','photoBlend','autoMood','duoLow','duoHigh','rtype','rsize','ropacity','rangle','rcolor','rasterBlend','rasterX','rasterY','half3','halfC1','halfC2','halfC3','halfOffset','halfFocusX','halfFocusY','halfInvert','synthOn','synthType','synthDensity','synthScale','synthWidth','synthColor','synthBlend','synthOpacity','synthSeed','synthX','synthY','flowLen','flowArr','bokehOn','bokehCount','bokehSize','bokehSizeVar','bokehBlur','bokehOpacity','bokehColor','bokehBlend','bokehSeed','glass','gtitle','gsub','gx','gy','gw','gh','gblur','gtint','gradius','gfs','gstyle','gtextcol','grain','vig','master','bandMain','bandShadow','hdrSVG','hdrOn','hdrOp','ftrSVG','ftrOn','ftrOp','ovOn','ovMode','ovColor','ovL','ovR','ovT','ovB','ovInt','ctOn','ctLayout','ctSplit','ctSplitRatio','ctKicker','ctHead','ctSub','ctBody','ctAlign','ctColor','ctAccent','ctScrim','ctScrimStr','ctScrimBlur','ctScrimRad','ctMT','ctMB','ctML','ctMR','ctReact','ctHFsafe','ctList','ctBullet','ctScale','ctSafe'];
 function snapshot(){const o={};STYLEKEYS.forEach(k=>o[k]=JSON.parse(JSON.stringify(S[k])));return o;}
-function applyStyle(o){STYLEKEYS.forEach(k=>{if(k in o)S[k]=JSON.parse(JSON.stringify(o[k]));});if(!Array.isArray(S.ratio))S.ratio=[16,9];S.selPt=-1;syncUI();draw();}
+function applyStyle(o){STYLEKEYS.forEach(k=>{if(k in o)S[k]=JSON.parse(JSON.stringify(o[k]));});if('ctMargin'in o&&!('ctMT'in o)){S.ctMT=S.ctMB=S.ctML=S.ctMR=o.ctMargin;}if(!Array.isArray(S.ratio))S.ratio=[16,9];S.selPt=-1;syncUI();draw();}
 function addStyle(name){SAVED.push({name:name||('Stil '+(SAVED.length+1)),data:snapshot()});store();refreshPalettes();renderStyleList();toast('Stil gespeichert');}
 function renderStyleList(){const L=$('#styleList');L.innerHTML='';SAVED.forEach((st,i)=>{const row=document.createElement('div');row.style.cssText='display:flex;gap:6px';const a=document.createElement('button');a.className='btn ghost';a.textContent=st.name;a.style.flex='1';a.style.justifyContent='flex-start';a.onclick=()=>applyStyle(st.data);const x=document.createElement('button');x.className='btn ghost danger';x.textContent='×';x.style.width='40px';x.style.flex='none';x.onclick=()=>{SAVED.splice(i,1);store();refreshPalettes();renderStyleList();};row.appendChild(a);row.appendChild(x);L.appendChild(row);});}
 $('#palStyleSave').onclick=()=>{addStyle($('#palStyleName').value.trim());$('#palStyleName').value='';};
@@ -722,10 +730,9 @@ function syncUI(){
   setToggle('synthToggle',S.synthOn);if($('#synthctl'))$('#synthctl').style.display=S.synthOn?'block':'none';setSeg('#synthType',S.synthType);setSlider('synthDensity',S.synthDensity,'synthDv');setSlider('synthScale',S.synthScale,'synthScv');setSlider('synthWidth',Math.round(S.synthWidth*10),'synthWv');setSlider('synthOpacity',Math.round(S.synthOpacity*100),'synthOv');setSeg('#synthColMode',S.synthColor==='palette'?'palette':'custom');if(S.synthColor!=='palette')$('#synthColor').value=S.synthColor;if($('#synthBlend'))$('#synthBlend').value=S.synthBlend;
   setSlider('flowLen',S.flowLen,'flowLv');setSeg('#flowArr',S.flowArr);setSlider('synthX',Math.round(S.synthX*100),'synthXv');setSlider('synthY',Math.round(S.synthY*100),'synthYv');if($('#flowctl'))$('#flowctl').style.display=S.synthType==='flow'?'block':'none';
   setToggle('bokehToggle',S.bokehOn);if($('#bokehctl'))$('#bokehctl').style.display=S.bokehOn?'block':'none';setSlider('bokehCount',S.bokehCount,'bkCv');setSlider('bokehSize',S.bokehSize,'bkSv');setSlider('bokehSizeVar',Math.round(S.bokehSizeVar*100),'bkVv');setSlider('bokehBlur',S.bokehBlur,'bkBv');setSlider('bokehOpacity',Math.round(S.bokehOpacity*100),'bkOv');setSeg('#bokehColMode',S.bokehColor==='palette'?'palette':'custom');if(S.bokehColor!=='palette')$('#bokehColor').value=S.bokehColor;if($('#bokehBlend'))$('#bokehBlend').value=S.bokehBlend;
-  setToggle('glassToggle',S.glass);if($('#glassctl'))$('#glassctl').style.display=S.glass?'block':'none';$('#gtitle').value=S.gtitle;$('#gsub').value=S.gsub;setSlider('gw',Math.round(S.gw*100),'gwv');setSlider('gh',Math.round(S.gh*100),'ghv');setSlider('gblur',S.gblur,'gblurv');setSlider('gtint',S.gtint,'gtintv');setSlider('gradius',S.gradius,'gradv');setSlider('gfs',S.gfs,'gfsv');setSeg('#gstyle',S.gstyle);$('#gtextcol').value=S.gtextcol;
   setSlider('grain',Math.round(S.grain*100),'grainv');setSlider('vig',Math.round(S.vig*100),'vigv');setSlider('master',Math.round(S.master*100),'masterv');
   setToggle('ovToggle',S.ovOn);if($('#ovctl'))$('#ovctl').style.display=S.ovOn?'block':'none';setSeg('#ovMode',S.ovMode);if($('#ovColorRow'))$('#ovColorRow').style.display=S.ovMode==='color'?'':'none';if($('#ovColor'))$('#ovColor').value=S.ovColor;setSlider('ovL',Math.round(S.ovL*100),'ovLv');setSlider('ovR',Math.round(S.ovR*100),'ovRv');setSlider('ovT',Math.round(S.ovT*100),'ovTv');setSlider('ovB',Math.round(S.ovB*100),'ovBv');setSlider('ovInt',Math.round(S.ovInt*100),'ovIv');
-  setToggle('ctToggle',S.ctOn);if($('#ctctl'))$('#ctctl').style.display=S.ctOn?'block':'none';if($('#ctLayout'))$('#ctLayout').value=S.ctLayout;setSeg('#ctSplit',S.ctSplit);setSlider('ctSplitRatio',Math.round(S.ctSplitRatio*100),'ctSRv');if($('#ctKicker'))$('#ctKicker').value=S.ctKicker;if($('#ctHead'))$('#ctHead').value=S.ctHead;if($('#ctSub'))$('#ctSub').value=S.ctSub;if($('#ctBody'))$('#ctBody').value=S.ctBody;setSeg('#ctAlign',S.ctAlign);if($('#ctColor'))$('#ctColor').value=S.ctColor;if($('#ctAccent'))$('#ctAccent').value=S.ctAccent;setSeg('#ctScrim',S.ctScrim);setSlider('ctMargin',Math.round(S.ctMargin*100),'ctMv');setSlider('ctScale',Math.round(S.ctScale*100),'ctScv');setToggle('ctSafe',S.ctSafe);if($('#ctImgRm'))$('#ctImgRm').style.display=S.ctImg?'block':'none';
+  setToggle('ctToggle',S.ctOn);if($('#ctctl'))$('#ctctl').style.display=S.ctOn?'block':'none';if($('#ctLayout'))$('#ctLayout').value=S.ctLayout;setSeg('#ctSplit',S.ctSplit);setSlider('ctSplitRatio',Math.round(S.ctSplitRatio*100),'ctSRv');if($('#ctKicker'))$('#ctKicker').value=S.ctKicker;if($('#ctHead'))$('#ctHead').value=S.ctHead;if($('#ctSub'))$('#ctSub').value=S.ctSub;if($('#ctBody'))$('#ctBody').value=S.ctBody;setSeg('#ctAlign',S.ctAlign);if($('#ctColor'))$('#ctColor').value=S.ctColor;if($('#ctAccent'))$('#ctAccent').value=S.ctAccent;setSeg('#ctScrim',S.ctScrim);setSlider('ctScrimStr',Math.round(S.ctScrimStr*100),'ctScrimStrv');setSlider('ctScrimBlur',S.ctScrimBlur,'ctScrimBlurv');setSlider('ctScrimRad',S.ctScrimRad,'ctScrimRadv');setSlider('ctMT',Math.round(S.ctMT*100),'ctMTv');setSlider('ctMB',Math.round(S.ctMB*100),'ctMBv');setSlider('ctML',Math.round(S.ctML*100),'ctMLv');setSlider('ctMR',Math.round(S.ctMR*100),'ctMRv');setToggle('ctReact',S.ctReact);setSlider('ctHFsafe',Math.round(S.ctHFsafe*100),'ctHFv');if($('#ctList'))$('#ctList').value=S.ctList;setSeg('#ctBullet',S.ctBullet);setSlider('ctScale',Math.round(S.ctScale*100),'ctScv');setToggle('ctSafe',S.ctSafe);if($('#ctImgRm'))$('#ctImgRm').style.display=S.ctImg?'block':'none';
   $$('#ratios button').forEach(b=>b.classList.toggle('on',b.dataset.r===S.ratio.join(':')));updateDims();
 }
 loadStore();refreshPalettes();renderStyleList();

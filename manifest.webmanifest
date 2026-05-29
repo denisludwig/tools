@@ -2,8 +2,6 @@
   "name": "Background Studio",
   "short_name": "BG Studio",
   "description": "Hintergrund- & Key-Visual-Generator",
-  "start_url": "./BGStudio.html",
-  "scope": "./",
   "display": "standalone",
   "orientation": "landscape",
   "background_color": "#0b0c10",

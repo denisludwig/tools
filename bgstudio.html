@@ -486,20 +486,26 @@
           <div class="row" style="margin-top:10px"><label class="lab">Kicker / Label (Eyebrow)</label><input type="text" id="ctKicker" value="KICKER"></div>
           <div class="row"><label class="lab">Hauptüberschrift</label><input type="text" id="ctHead" value="Hauptüberschrift"></div>
           <div class="row"><label class="lab">Unterüberschrift</label><input type="text" id="ctSub" value="Eine prägnante Unterzeile"></div>
-          <div class="row"><label class="lab">Mengentext</label><textarea id="ctBody" rows="3" style="resize:vertical">Hier steht ein Absatz Mengentext, der zeigt, wie sich der Hintergrund mit echtem Inhalt verhält und ob die Lesbarkeit stimmt.</textarea></div>
-          <div class="row"><label class="lab">Aufzählung (eine pro Zeile)</label><textarea id="ctList" rows="3" style="resize:vertical">Erster Punkt der Aufzählung
-Ein zweiter wichtiger Aspekt
-Und ein dritter Gedanke dazu</textarea></div>
+          <div class="row"><label class="lab">Mengentext</label><textarea id="ctBody" rows="4" style="resize:vertical">Hier steht ein Absatz Mengentext, der zeigt, wie sich der Hintergrund mit echtem Inhalt verhält und ob die Lesbarkeit über mehrere Zeilen hinweg stabil bleibt.
+Ein zweiter Absatz führt den Gedanken weiter und bringt genug Länge mit, damit der Satz umbricht und die Fläche realistisch gefüllt wird – so wie in einer echten Folie oder einem Artikel.
+Im dritten Absatz geht es um Rhythmus und Abstand: Genug Text, um die Wirkung von Kontrast, Unterlegern und Typografie über die gesamte Höhe zu beurteilen.
+Auch ein vierter Absatz hilft, das Verhalten in hohen Formaten wie 9:16 zu prüfen, in denen deutlich mehr vertikaler Raum gefüllt werden will.
+Der fünfte Absatz rundet die Probe ab und stellt sicher, dass der Satz auch bei viel Inhalt ruhig, lesbar und ausgewogen bleibt.</textarea></div>
+          <div class="row"><label class="lab">Aufzählung (eine pro Zeile)</label><textarea id="ctList" rows="4" style="resize:vertical">Ein erster Punkt, der den Kerngedanken klar und vollständig auf den Punkt bringt
+Ein zweiter Aspekt mit genügend Länge, damit die Zeile realistisch umbricht
+Ein dritter Gedanke, der die Aufzählung sinnvoll ergänzt und weiterführt
+Ein vierter Punkt für mehr Fülle und eine bessere Vorschau der Wirkung
+Ein fünfter und abschließender Punkt, der die Liste rund und vollständig macht</textarea></div>
           <div class="row"><label class="lab">Aufzählungszeichen</label><div class="seg sm" id="ctBullet"><button data-v="•" class="on">•</button><button data-v="–">–</button><button data-v="▸">▸</button><button data-v="◆">◆</button><button data-v="✓">✓</button><button data-v="1.">1.</button><button data-v="keine">ohne</button></div></div>
-          <div class="row"><label class="lab">Lorem ipsum · Aufzählung</label><div class="seg sm" id="ctLorem"><button data-v="kurz">kurz</button><button data-v="mittel" class="on">mittel</button><button data-v="lang">lang</button></div></div>
-          <div class="row grid2"><div><label class="lab">Mengentext · Sätze <b id="loremTotalv">8</b></label><input type="range" id="loremTotal" min="1" max="40" value="8"></div><div><label class="lab">Absätze <b id="loremParasv">2</b></label><input type="range" id="loremParas" min="1" max="8" value="2"></div></div>
+          <div class="row"><label class="lab">Lorem ipsum · Aufzählung</label><div class="seg sm" id="ctLorem"><button data-v="kurz">kurz</button><button data-v="mittel">mittel</button><button data-v="lang" class="on">lang</button></div></div>
+          <div class="row grid2"><div><label class="lab">Mengentext · Sätze <b id="loremTotalv">14</b></label><input type="range" id="loremTotal" min="1" max="60" value="14"></div><div><label class="lab">Absätze <b id="loremParasv">5</b></label><input type="range" id="loremParas" min="1" max="10" value="5"></div></div>
           <div class="grid2"><button class="btn ghost" id="ctLoremBody">→ Mengentext füllen</button><button class="btn ghost" id="ctLoremList">→ Aufzählung füllen</button></div>
           <div class="row"><label class="lab">Ausrichtung</label><div class="seg sm" id="ctAlign"><button data-v="left" class="on">links</button><button data-v="center">zentriert</button><button data-v="right">rechts</button></div></div>
           <div class="row grid2"><div><label class="lab">Textfarbe</label><input type="color" class="clr" id="ctColor" value="#ffffff"></div><div><label class="lab">Akzent</label><input type="color" class="clr" id="ctAccent" value="#2d9cff"></div></div>
           <div class="row"><label class="lab">Lesehilfe-Hintergrund</label><div class="seg sm" id="ctScrim"><button data-v="none" class="on">keine</button><button data-v="gradient">Verlauf</button><button data-v="panel">Fläche</button><button data-v="glass">Glas</button></div></div>
           <div class="row"><label class="lab">Unterleger-Form <span style="color:var(--mut2);text-transform:none;letter-spacing:0">Fläche/Glas</span></label><div class="seg sm" id="ctScrimShape"><button data-v="block" class="on">Block</button><button data-v="lines">Zeilenweise</button></div></div>
           <div class="row grid2"><div><label class="lab">Stärke <b id="ctScrimStrv">50</b></label><input type="range" id="ctScrimStr" min="0" max="100" value="50"></div><div><label class="lab">Glas-Unschärfe <b id="ctScrimBlurv">18</b></label><input type="range" id="ctScrimBlur" min="2" max="60" value="18"></div></div>
-          <div class="row"><label class="lab">Lesehilfe-Rundung <b id="ctScrimRadv">26</b></label><input type="range" id="ctScrimRad" min="0" max="80" value="26"></div>
+          <div class="row"><label class="lab">Lesehilfe-Rundung <b id="ctScrimRadv">0</b></label><input type="range" id="ctScrimRad" min="0" max="80" value="0"></div>
           <div class="toggle row on" id="ctScrimAuto"><span class="tk"></span> Farbe automatisch (Kontrast)</div>
           <div class="row grid2"><div><label class="lab">Flächenfarbe</label><input type="color" class="clr" id="ctScrimColC" value="#000000"></div><div><label class="lab">Glasfarbe</label><input type="color" class="clr" id="ctGlassColC" value="#0a0f1a"></div></div>
           <div class="toggle row on" id="ctReact"><span class="tk"></span> Auf Header/Footer reagieren</div>
@@ -608,7 +614,7 @@ const S={ratio:[16,9],meshMode:'soft',gradType:'radial',gradAngle:90,paletteIdx:
   flareOn:false,flareX:.32,flareY:.3,flareSize:42,flareInt:.85,flareColor:'#9ec5ff',flareStreak:.7,flareGhosts:5,flareRays:.6,flareBlend:'screen',flareVeil:true,flareIris:true,flareCore:true,flareSeed:7,
   glass:false,gtitle:'Dein Titel',gsub:'Untertitel oder Claim',gx:.5,gy:.5,gw:.46,gh:.34,gblur:18,gtint:14,gradius:26,gfs:58,gstyle:'light',gtextcol:'#ffffff',
   grain:.08,vig:.16,master:1,ovOn:false,ovMode:'color',ovColor:'#ffffff',ovL:0,ovR:0,ovT:0,ovB:0,ovInt:1,
-  ctOn:false,ctLayout:'title',ctSplit:'none',ctSplitRatio:.45,ctImg:null,ctImgFit:'cover',ctImgZoom:1,ctImgX:.5,ctImgY:.5,ctKicker:'KICKER',ctList:['Erster Punkt der Aufzählung','Ein zweiter wichtiger Aspekt','Und ein dritter Gedanke dazu'].join(String.fromCharCode(10)),ctBullet:'•',ctHead:'Hauptüberschrift',ctSub:'Eine prägnante Unterzeile',ctBody:'Hier steht ein Absatz Mengentext, der zeigt, wie sich der Hintergrund mit echtem Inhalt verhält und ob die Lesbarkeit stimmt.',ctAlign:'left',ctColor:'#ffffff',ctAccent:'#2d9cff',ctScrim:'none',ctScrimShape:'block',ctScrimStr:.5,ctScrimBlur:18,ctScrimRad:26,ctScrimAuto:true,ctScrimColC:'#000000',ctGlassColC:'#0a0f1a',ctReact:true,ctHFsafe:.12,ctMT:.07,ctMB:.07,ctML:.07,ctMR:.07,ctFit:true,ctScale:1,ctSafe:false,_dpr:1};
+  ctOn:false,ctLayout:'title',ctSplit:'none',ctSplitRatio:.45,ctImg:null,ctImgFit:'cover',ctImgZoom:1,ctImgX:.5,ctImgY:.5,ctKicker:'KICKER',ctList:['Ein erster Punkt, der den Kerngedanken klar und vollständig auf den Punkt bringt','Ein zweiter Aspekt mit genügend Länge, damit die Zeile realistisch umbricht','Ein dritter Gedanke, der die Aufzählung sinnvoll ergänzt und weiterführt','Ein vierter Punkt für mehr Fülle und eine bessere Vorschau der Wirkung','Ein fünfter und abschließender Punkt, der die Liste rund und vollständig macht'].join(String.fromCharCode(10)),ctBullet:'•',ctHead:'Hauptüberschrift',ctSub:'Eine prägnante Unterzeile',ctBody:'Hier steht ein Absatz Mengentext, der zeigt, wie sich der Hintergrund mit echtem Inhalt verhält und ob die Lesbarkeit über mehrere Zeilen hinweg stabil bleibt.\nEin zweiter Absatz führt den Gedanken weiter und bringt genug Länge mit, damit der Satz umbricht und die Fläche realistisch gefüllt wird – so wie in einer echten Folie oder einem Artikel.\nIm dritten Absatz geht es um Rhythmus und Abstand: Genug Text, um die Wirkung von Kontrast, Unterlegern und Typografie über die gesamte Höhe zu beurteilen.\nAuch ein vierter Absatz hilft, das Verhalten in hohen Formaten wie 9:16 zu prüfen, in denen deutlich mehr vertikaler Raum gefüllt werden will.\nDer fünfte Absatz rundet die Probe ab und stellt sicher, dass der Satz auch bei viel Inhalt ruhig, lesbar und ausgewogen bleibt.',ctAlign:'left',ctColor:'#ffffff',ctAccent:'#2d9cff',ctScrim:'none',ctScrimShape:'block',ctScrimStr:.5,ctScrimBlur:18,ctScrimRad:0,ctScrimAuto:true,ctScrimColC:'#000000',ctGlassColC:'#0a0f1a',ctReact:true,ctHFsafe:.12,ctMT:.07,ctMB:.07,ctML:.07,ctMR:.07,ctFit:true,ctScale:1,ctSafe:false,_dpr:1};
 const BASEW=1600;
 let SAVED=[];
 
@@ -928,29 +934,41 @@ function drawScrim(ctx,w,h,s,L){if(S.ctScrim==='none')return;const str=S.ctScrim
   const pad=Math.max(12*s,0.02*h);const px=L.align==='center'?L.ax-L.bw/2:L.align==='right'?L.ax-L.bw:L.ax;const rx=px-pad,ry=L.y-pad,rw=L.bw+2*pad,rh=L.total+2*pad,rad=S.ctScrimRad*s;const c=hex2rgb(S.ctColor),lum=(0.299*c[0]+0.587*c[1]+0.114*c[2])/255;
   if(S.ctScrim==='glass'){const snap=document.createElement('canvas');snap.width=w;snap.height=h;snap.getContext('2d').drawImage(ctx.canvas,0,0);ctx.save();roundRect(ctx,rx,ry,rw,rh,rad);ctx.clip();ctx.filter=`blur(${S.ctScrimBlur*s}px)`;ctx.drawImage(snap,0,0);ctx.filter='none';const tc=S.ctScrimAuto?(lum>0.5?'8,16,26':'255,255,255'):hex2rgb(S.ctGlassColC).join(',');ctx.fillStyle=`rgba(${tc},${str*0.5})`;ctx.fillRect(rx,ry,rw,rh);const sh=ctx.createLinearGradient(rx,ry,rx,ry+rh);sh.addColorStop(0,`rgba(255,255,255,${lum>0.5?.12:.2})`);sh.addColorStop(.5,'rgba(255,255,255,0)');ctx.fillStyle=sh;ctx.fillRect(rx,ry,rw,rh);ctx.restore();ctx.save();roundRect(ctx,rx+.5,ry+.5,rw-1,rh-1,rad);ctx.lineWidth=1.2*s;ctx.strokeStyle=`rgba(255,255,255,${lum>0.5?.3:.22})`;ctx.stroke();ctx.restore();}
   else{ctx.save();roundRect(ctx,rx,ry,rw,rh,rad);ctx.fillStyle=ctScrimCol(str);ctx.fill();ctx.restore();}}
-/* Zeilenweise Unterleger: pro Zeile (Überschriften), zusammenhängend (Mengentext, da Zeilen
-   sich vertikal berühren), pro Punkt (Aufzählung). Kicker-Box umschließt den Anstrich und
-   kontrastiert gegen die Kicker-/Accent-Farbe. */
+/* Zeilenweise Unterleger. Boxhöhe folgt den ECHTEN Glyphen-Grenzen (measureText:
+   actualBoundingBoxAscent/Descent) statt der Zeilenhöhe → keine leere Fläche unter Zeilen
+   ohne Unterlängen. Ascent/Descent werden pro Block vereinheitlicht (Max über die Zeilen)
+   → konstante Boxhöhe je Block, kein „Springen“. Mengentext: pro Zeile, vertikal aneinander
+   gezogen → durchgehende Marker-Fläche mit zackigem rechten Rand (Absätze trennen).
+   Aufzählung: pro Punkt. Kicker umschließt seinen Anstrich, Kontrast gegen die Accent-Farbe. */
 function ctBuildBoxes(ctx,blocks,y0,ax,align,gap,s){
-  const boxes=[];let yy=y0;const hpadOf=b=>b.size*0.42;
-  const place=(left,w)=>align==='center'?left-w/2:align==='right'?left-w:left; // left hier = Ankerpunkt
+  const boxes=[];let yy=y0;
+  const place=w=>align==='center'?ax-w/2:align==='right'?ax-w:ax;
   blocks.forEach(b=>{
-    const accentAdj=b.accent?b.size*1.0:0,textTop=yy+accentAdj,vpad=Math.max(0,(b.lh-b.size)/2),hpad=hpadOf(b);
-    if(b.bullet){
-      const top=textTop-vpad,bottom=textTop+(b.lines.length-1)*b.lh+b.size+vpad;
-      const x0=align==='center'?ax-b.w/2:align==='right'?ax-b.w:ax;
-      boxes.push({x:x0-hpad,y:top,w:b.w+2*hpad,h:bottom-top,ref:S.ctColor});
-    } else {
-      ctx.font=ctFont(b.type,b.size);const isKicker=(b.type==='kicker');
-      b.lines.forEach((ln,i)=>{
-        if(ln==='')return;                                   // Absatzumbruch → trennt
-        let lw=ctx.measureText(ln).width;
-        if(isKicker)lw+=Math.max(0,ln.length-1)*b.size*0.12; // Laufweite des Kickers
-        const lineY=textTop+i*b.lh;let bw=lw,top=lineY-vpad,h=b.lh+0.6*s;
-        if(isKicker&&i===0){bw=Math.max(lw,b.size*1.7);const accentTop=yy+b.size*0.05;h+=(top-accentTop);top=accentTop;}
-        const x0=align==='center'?ax-bw/2:align==='right'?ax-bw:ax;
-        boxes.push({x:x0-hpad,y:top,w:bw+2*hpad,h:h,ref:isKicker?S.ctAccent:S.ctColor});
-      });
+    const accentAdj=b.accent?b.size*1.0:0,textTop=yy+accentAdj,padV=b.size*0.12,hpad=b.size*0.34;
+    ctx.font=ctFont(b.type,b.size);const isKicker=(b.type==='kicker'),isBody=(b.type==='body');
+    const ls=b.lines.map((ln,i)=>{if(ln==='')return null;const m=ctx.measureText(ln);
+      const fAsc=(m.fontBoundingBoxAscent!=null)?m.fontBoundingBoxAscent:b.size*0.82;
+      const aAsc=(m.actualBoundingBoxAscent!=null)?m.actualBoundingBoxAscent:b.size*0.70;
+      const aDesc=(m.actualBoundingBoxDescent!=null)?m.actualBoundingBoxDescent:b.size*0.20;
+      let lw=m.width;if(isKicker)lw+=Math.max(0,ln.length-1)*b.size*0.12;
+      return {i,baseline:textTop+i*b.lh+fAsc,aAsc,aDesc,lw};});
+    const present=ls.filter(Boolean);
+    if(present.length){
+      const A=Math.max(...present.map(l=>l.aAsc)),D=Math.max(...present.map(l=>l.aDesc));
+      if(b.bullet){
+        const first=present[0],last=present[present.length-1];
+        const top=first.baseline-A-padV,bottom=last.baseline+D+padV,x0=place(b.w);
+        boxes.push({x:x0-hpad,y:top,w:b.w+2*hpad,h:bottom-top,ref:S.ctColor});
+      } else {
+        present.forEach((l,k)=>{
+          let top=l.baseline-A-padV,bottom=l.baseline+D+padV;
+          if(isKicker&&l.i===0){const accentTop=yy+b.size*0.35-2.5*s;top=Math.min(top,accentTop);}
+          if(isBody){const nx=present[k+1];if(nx&&nx.i===l.i+1)bottom=Math.max(bottom,nx.baseline-A-padV);}
+          let w=l.lw;if(isKicker&&l.i===0)w=Math.max(w,b.size*1.7);
+          const x0=place(w);
+          boxes.push({x:x0-hpad,y:top,w:w+2*hpad,h:bottom-top,ref:isKicker?S.ctAccent:S.ctColor});
+        });
+      }
     }
     yy+=accentAdj+b.bh+gap+(b.bullet?b.size*0.32:0);
   });
@@ -1169,12 +1187,12 @@ slide('ctHFsafe','ctHFsafe','ctHFv',v=>v/100);slide('ctMT','ctMT','ctMTv',v=>v/1
 const ctFitTg=$('#ctFit');ctFitTg.onclick=()=>{S.ctFit=!S.ctFit;ctFitTg.classList.toggle('on',S.ctFit);draw();};
 $('#ctList').oninput=e=>{S.ctList=e.target.value;draw();};
 $$('#ctBullet button').forEach(b=>b.onclick=()=>{S.ctBullet=b.dataset.v;$$('#ctBullet button').forEach(x=>x.classList.toggle('on',x===b));draw();});
-let loremLen='mittel';$$('#ctLorem button').forEach(b=>b.onclick=()=>{loremLen=b.dataset.v;$$('#ctLorem button').forEach(x=>x.classList.toggle('on',x===b));});
-let loremTotal=8,loremParas=2;
+let loremLen='lang';$$('#ctLorem button').forEach(b=>b.onclick=()=>{loremLen=b.dataset.v;$$('#ctLorem button').forEach(x=>x.classList.toggle('on',x===b));});
+let loremTotal=14,loremParas=5;
 $('#loremTotal').oninput=e=>{loremTotal=+e.target.value;$('#loremTotalv').textContent=e.target.value;if(+e.target.value<loremParas){loremParas=+e.target.value;$('#loremParas').value=loremParas;$('#loremParasv').textContent=loremParas;}};
 $('#loremParas').oninput=e=>{loremParas=+e.target.value;$('#loremParasv').textContent=e.target.value;};
 $('#ctLoremBody').onclick=()=>{S.ctBody=loremPara(loremTotal,loremParas);$('#ctBody').value=S.ctBody;draw();};
-$('#ctLoremList').onclick=()=>{S.ctList=loremItems({kurz:3,mittel:4,lang:6}[loremLen]).join(String.fromCharCode(10));$('#ctList').value=S.ctList;draw();};
+$('#ctLoremList').onclick=()=>{S.ctList=loremItems({kurz:4,mittel:6,lang:8}[loremLen]).join(String.fromCharCode(10));$('#ctList').value=S.ctList;draw();};
 const ctSafeTg=$('#ctSafe');ctSafeTg.onclick=()=>{S.ctSafe=!S.ctSafe;ctSafeTg.classList.toggle('on',S.ctSafe);draw();};
 $('#ctImgLoad').onclick=()=>$('#ctImgFile').click();
 $('#ctImgFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const img=new Image();img.onload=()=>{S.ctImg=img;$('#ctImgRm').style.display='block';$('#ctImgCrop').style.display='block';draw();};img.src=URL.createObjectURL(f);};
@@ -1185,7 +1203,7 @@ slide('ctImgZoom','ctImgZoom','ctImgZoomv',v=>v/100);slide('ctImgX','ctImgX','ct
 const CT_PAGE_KEYS=['ctLayout','ctSplit','ctSplitRatio','ctKicker','ctHead','ctSub','ctBody','ctAlign','ctColor','ctAccent','ctScrim','ctScrimShape','ctScrimStr','ctScrimBlur','ctScrimRad','ctScrimAuto','ctScrimColC','ctGlassColC','ctReact','ctHFsafe','ctList','ctBullet','ctFit','ctScale','ctSafe'];
 function ctPageData(){const o={};CT_PAGE_KEYS.forEach(k=>o[k]=JSON.parse(JSON.stringify(S[k])));return o;}
 function ctApplyPageData(d){CT_PAGE_KEYS.forEach(k=>{if(k in d)S[k]=JSON.parse(JSON.stringify(d[k]));});}
-const CT_PAGE_BASE={ctLayout:'title',ctSplit:'none',ctSplitRatio:.45,ctAlign:'left',ctColor:'#ffffff',ctAccent:'#2d9cff',ctScrim:'none',ctScrimShape:'block',ctScrimStr:.5,ctScrimBlur:18,ctScrimRad:26,ctScrimAuto:true,ctScrimColC:'#000000',ctGlassColC:'#0a0f1a',ctKicker:'KICKER',ctHead:'Hauptüberschrift',ctSub:'Eine prägnante Unterzeile',ctBody:'Hier steht ein Absatz Mengentext.',ctList:'Erster Punkt\nZweiter Punkt\nDritter Punkt',ctBullet:'•',ctReact:true,ctHFsafe:.12,ctFit:true,ctScale:1,ctSafe:false};
+const CT_PAGE_BASE={ctLayout:'title',ctSplit:'none',ctSplitRatio:.45,ctAlign:'left',ctColor:'#ffffff',ctAccent:'#2d9cff',ctScrim:'none',ctScrimShape:'block',ctScrimStr:.5,ctScrimBlur:18,ctScrimRad:0,ctScrimAuto:true,ctScrimColC:'#000000',ctGlassColC:'#0a0f1a',ctKicker:'KICKER',ctHead:'Hauptüberschrift',ctSub:'Eine prägnante Unterzeile',ctBody:'Hier steht ein Absatz Mengentext.',ctList:'Erster Punkt\nZweiter Punkt\nDritter Punkt',ctBullet:'•',ctReact:true,ctHFsafe:.12,ctFit:true,ctScale:1,ctSafe:false};
 function ctp(name,o){return {name,data:Object.assign({},CT_PAGE_BASE,o)};}
 const DEFAULT_CT_PAGES=[
   ctp('Titelfolie · Magazin',{ctLayout:'title',ctAlign:'left',ctScrim:'gradient',ctScrimStr:.5,ctAccent:'#2d9cff',ctKicker:'MAGAZIN',ctHead:'Geschichten, die bewegen',ctSub:'Reportagen aus Mitteldeutschland'}),

@@ -102,7 +102,8 @@
   .pedit{margin-top:11px;border-top:1px solid #ffffff14;padding-top:11px}
   .pedit .lab{color:var(--mut)}
   .ptbody{margin:6px 0}
-  .irow{display:flex;gap:7px;margin-top:9px}
+  .irow{display:flex;gap:7px;margin-top:9px;flex-wrap:wrap}
+  .irow #ptDel{flex-basis:100%}            /* Desktop: Löschen eigene Zeile, darunter Farben/Anordnung */
   .ibtn{flex:1;background:#ffffff10;border:1px solid #ffffff1f;color:var(--ink);border-radius:8px;padding:7px;font-family:var(--mono);font-size:10.5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
   .ibtn:hover{border-color:var(--acc);color:var(--acc)}
   .stamp{position:absolute;bottom:14px;right:18px;font-size:10px;color:var(--mut2);letter-spacing:.05em}
@@ -194,6 +195,7 @@
     .insp .ibody{display:flex;flex-direction:column;gap:9px;padding:9px}
     .insp #ptEditor{order:1}
     .insp .irow{order:2;margin-top:0}                 /* Buttons nach unten, unter die Regler */
+    .insp #ptDel{flex-basis:0}                        /* Phone: alle drei in eine Zeile */
     .insp #chips{order:3;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;padding-bottom:2px;scrollbar-width:none}
     .insp #chips::-webkit-scrollbar{display:none}
     .insp #chips .chip{flex:none}                    /* nicht stauchen, lieber scrollen */
@@ -537,10 +539,10 @@ Und ein dritter Gedanke dazu</textarea></div>
               <label class="lab" style="margin-top:8px">Deckkraft <b id="ptAlphaV">100</b></label><input type="range" id="ptAlpha" min="0" max="100" value="100">
             </div>
           </div>
-          <button class="ibtn" id="ptDel" style="margin-top:9px">Punkt löschen</button>
         </div>
         <div class="seg sm" id="csrc2" style="margin-top:12px;margin-bottom:8px"><button data-v="main" class="on">Hauptfarbe</button><button data-v="sub">Subfarben</button><button data-v="free">Frei</button></div>
         <div class="irow">
+          <button class="ibtn" id="ptDel">Punkt löschen</button>
           <button class="ibtn" id="shuffle"><svg class="ic" style="width:13px;height:13px" viewBox="0 0 24 24"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>Farben</button>
           <button class="ibtn" id="repos"><svg class="ic" style="width:13px;height:13px" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9 9 0 0 0-6 2.3M3 4v4h4"/></svg>Anordnung</button>
         </div>
@@ -1010,7 +1012,7 @@ function renderChips(){chips.innerHTML='';S.points.forEach((p,i)=>{const c=docum
   c.ondrop=e=>{e.preventDefault();const after=c.classList.contains('dropafter');c.classList.remove('dropbefore','dropafter');if(dragChipIdx<0)return;const gap=after?i+1:i,to=gap-(dragChipIdx<gap?1:0);reorderPoint(dragChipIdx,Math.max(0,Math.min(S.points.length-1,to)));};
   chips.appendChild(c);});const add=document.createElement('div');add.className='chip add';add.textContent='+';add.title='Punkt hinzufügen';add.onclick=()=>addPoint();chips.appendChild(add);}
 function addPoint(x=.5,y=.5){if(S.points.length>=8){toast('max. 8 Punkte');return;}S.points.push({x,y,color:randColor(),r:1,hard:0,a:1});S.selPt=S.points.length-1;renderChips();syncEditor();draw();}
-function syncEditor(){const ed=$('#ptEditor');if(S.selPt<0||!S.points[S.selPt]){ed.style.display='none';return;}ed.style.display='block';const p=S.points[S.selPt];$('#ptName').textContent='Punkt '+(S.selPt+1);$('#ptColor').value=p.color.length===7?p.color:rgb2hex(...hex2rgb(p.color));$('#ptSize').value=Math.round(p.r*100);$('#ptSizeV').textContent=Math.round(p.r*100);$('#ptHard').value=Math.round(p.hard*100);$('#ptHardV').textContent=Math.round(p.hard*100);const pa=p.a==null?1:p.a;$('#ptAlpha').value=Math.round(pa*100);$('#ptAlphaV').textContent=Math.round(pa*100);}
+function syncEditor(){const ed=$('#ptEditor'),del=$('#ptDel');const has=!(S.selPt<0||!S.points[S.selPt]);if(del)del.style.display=has?'':'none';if(!has){ed.style.display='none';return;}ed.style.display='block';const p=S.points[S.selPt];$('#ptName').textContent='Punkt '+(S.selPt+1);$('#ptColor').value=p.color.length===7?p.color:rgb2hex(...hex2rgb(p.color));$('#ptSize').value=Math.round(p.r*100);$('#ptSizeV').textContent=Math.round(p.r*100);$('#ptHard').value=Math.round(p.hard*100);$('#ptHardV').textContent=Math.round(p.hard*100);const pa=p.a==null?1:p.a;$('#ptAlpha').value=Math.round(pa*100);$('#ptAlphaV').textContent=Math.round(pa*100);}
 $('#ptColor').oninput=e=>{if(S.points[S.selPt]){S.points[S.selPt].color=e.target.value;renderChips();draw();}};
 $('#ptSize').oninput=e=>{if(S.points[S.selPt]){S.points[S.selPt].r=+e.target.value/100;$('#ptSizeV').textContent=e.target.value;draw();}};
 $('#ptHard').oninput=e=>{if(S.points[S.selPt]){S.points[S.selPt].hard=+e.target.value/100;$('#ptHardV').textContent=e.target.value;draw();}};

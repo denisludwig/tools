@@ -185,8 +185,17 @@
     .sheet-head{display:block;flex:none}
     .scroll{padding:4px 14px calc(40px + env(safe-area-inset-bottom))}
     /* Tab-Filter erfolgt JS-gesteuert über .tab-hidden (siehe Skript) */
-    /* Inspektor über dem Peek-Sheet */
-    .insp{left:8px;right:8px;width:auto;bottom:calc(var(--sheet-peek) + 12px)}
+    /* Inspektor = schmale, schwebende Chip-Leiste über dem Peek-Sheet.
+       Punkt antippen → Detail-Regler erscheinen als Karte darüber (syncEditor). */
+    .insp{left:8px;right:8px;width:auto;bottom:calc(var(--sheet-peek) + 12px);background:rgba(16,18,24,.9)}
+    .insp .ihead{display:none}                       /* kein Header auf dem Phone */
+    .insp .ibody{display:flex;flex-direction:column-reverse;gap:9px;padding:9px}
+    .insp #chips{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;padding-bottom:2px;scrollbar-width:none}
+    .insp #chips::-webkit-scrollbar{display:none}
+    .insp #chips .chip{flex:none}                    /* nicht stauchen, lieber scrollen */
+    .insp #csrc2,.insp .hint{display:none}           /* redundant – steckt schon in der Sheet */
+    .insp .pedit{margin-top:0;border-top:0;padding-top:0;background:#ffffff08;border-radius:11px;padding:11px}
+    .insp .irow{margin-top:0}
   }
 </style>
 </head>

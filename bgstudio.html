@@ -101,6 +101,7 @@
   .chip.add:hover{border-color:var(--acc);color:var(--acc)}
   .pedit{margin-top:11px;border-top:1px solid #ffffff14;padding-top:11px}
   .pedit .lab{color:var(--mut)}
+  .ptbody{margin:6px 0}
   .irow{display:flex;gap:7px;margin-top:9px}
   .ibtn{flex:1;background:#ffffff10;border:1px solid #ffffff1f;color:var(--ink);border-radius:8px;padding:7px;font-family:var(--mono);font-size:10.5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
   .ibtn:hover{border-color:var(--acc);color:var(--acc)}
@@ -189,13 +190,19 @@
        Punkt antippen → Detail-Regler erscheinen als Karte darüber (syncEditor). */
     .insp{left:8px;right:8px;width:auto;bottom:calc(var(--sheet-peek) + 12px);background:rgba(16,18,24,.9)}
     .insp .ihead{display:none}                       /* kein Header auf dem Phone */
-    .insp .ibody{display:flex;flex-direction:column-reverse;gap:9px;padding:9px}
-    .insp #chips{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;padding-bottom:2px;scrollbar-width:none}
+    /* Reihenfolge oben→unten: Detail-Karte · Aktionen · Chip-Leiste */
+    .insp .ibody{display:flex;flex-direction:column;gap:9px;padding:9px}
+    .insp #ptEditor{order:1}
+    .insp .irow{order:2;margin-top:0}                 /* Buttons nach unten, unter die Regler */
+    .insp #chips{order:3;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;padding-bottom:2px;scrollbar-width:none}
     .insp #chips::-webkit-scrollbar{display:none}
     .insp #chips .chip{flex:none}                    /* nicht stauchen, lieber scrollen */
     .insp #csrc2,.insp .hint{display:none}           /* redundant – steckt schon in der Sheet */
     .insp .pedit{margin-top:0;border-top:0;padding-top:0;background:#ffffff08;border-radius:11px;padding:11px}
-    .insp .irow{margin-top:0}
+    /* Farbbalken hochkant links neben die Slider */
+    .insp .ptbody{display:flex;gap:11px;align-items:stretch;margin:8px 0 0}
+    .insp #ptColor{flex:none;width:44px;height:auto;align-self:stretch}
+    .insp .ptsliders{flex:1;min-width:0}
   }
 </style>
 </head>
@@ -522,10 +529,14 @@ Und ein dritter Gedanke dazu</textarea></div>
         <div class="chips" id="chips"></div>
         <div class="pedit" id="ptEditor" style="display:none">
           <label class="lab"><span id="ptName">Punkt</span><span style="color:var(--mut2)">ziehen im Bild</span></label>
-          <div class="row" style="margin:6px 0"><input type="color" class="clr" id="ptColor" style="height:30px"></div>
-          <label class="lab">Größe <b id="ptSizeV">100</b></label><input type="range" id="ptSize" min="20" max="260" value="100">
-          <label class="lab" style="margin-top:8px">Schärfe <b id="ptHardV">0</b></label><input type="range" id="ptHard" min="0" max="100" value="0">
-          <label class="lab" style="margin-top:8px">Deckkraft <b id="ptAlphaV">100</b></label><input type="range" id="ptAlpha" min="0" max="100" value="100">
+          <div class="ptbody">
+            <input type="color" class="clr" id="ptColor">
+            <div class="ptsliders">
+              <label class="lab">Größe <b id="ptSizeV">100</b></label><input type="range" id="ptSize" min="20" max="260" value="100">
+              <label class="lab" style="margin-top:8px">Schärfe <b id="ptHardV">0</b></label><input type="range" id="ptHard" min="0" max="100" value="0">
+              <label class="lab" style="margin-top:8px">Deckkraft <b id="ptAlphaV">100</b></label><input type="range" id="ptAlpha" min="0" max="100" value="100">
+            </div>
+          </div>
           <button class="ibtn" id="ptDel" style="margin-top:9px">Punkt löschen</button>
         </div>
         <div class="seg sm" id="csrc2" style="margin-top:12px;margin-bottom:8px"><button data-v="main" class="on">Hauptfarbe</button><button data-v="sub">Subfarben</button><button data-v="free">Frei</button></div>

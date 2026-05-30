@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>SVG → 3D · Render Backgrounds</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0c10;
+    --panel:rgba(20,22,28,0.72);
+    --panel-solid:#14161c;
+    --line:rgba(255,255,255,0.10);
+    --line-strong:rgba(255,255,255,0.18);
+    --txt:#eef1f5;
+    --dim:#8b93a1;
+    --accent:#8af7d2;
+    --accent-ink:#062b22;
+    --radius:14px;
+    font-synthesis:none;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);
+    font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;-webkit-font-smoothing:antialiased}
+  #stage{position:fixed;inset:0}
+  canvas{display:block}
+
+  /* ---------- Panel ---------- */
+  #panel{
+    position:fixed;top:16px;right:16px;width:330px;max-width:calc(100vw - 32px);
+    max-height:calc(100vh - 32px);overflow-y:auto;overscroll-behavior:contain;
+    background:var(--panel);backdrop-filter:blur(22px) saturate(140%);
+    -webkit-backdrop-filter:blur(22px) saturate(140%);
+    border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.03) inset;
+    padding:18px 18px 22px;z-index:10;transition:transform .42s cubic-bezier(.22,1,.36,1),opacity .3s;
+  }
+  #panel.hidden{transform:translateX(calc(100% + 24px));opacity:0;pointer-events:none}
+  #panel::-webkit-scrollbar{width:8px}
+  #panel::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:8px}
+
+  .brand{display:flex;align-items:baseline;gap:8px;margin-bottom:2px}
+  .brand h1{font-family:"Instrument Serif",Georgia,serif;font-weight:400;
+    font-size:30px;letter-spacing:.2px;line-height:1}
+  .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);
+    box-shadow:0 0 14px var(--accent);align-self:center}
+  .sub{color:var(--dim);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+    margin-bottom:18px}
+
+  .group{border-top:1px solid var(--line);padding-top:14px;margin-top:14px}
+  .group:first-of-type{border-top:none;padding-top:0;margin-top:0}
+  .glabel{font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);
+    margin-bottom:11px;display:flex;justify-content:space-between;align-items:center}
+
+  .seg{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .seg.four{grid-template-columns:1fr 1fr}
+  button.opt{
+    font-family:inherit;font-size:11px;letter-spacing:.02em;color:var(--txt);
+    background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:9px;
+    padding:9px 8px;cursor:pointer;transition:.16s;text-align:left;line-height:1.2}
+  button.opt:hover{border-color:var(--line-strong);background:rgba(255,255,255,.07)}
+  button.opt.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);
+    font-weight:600;box-shadow:0 4px 18px -6px var(--accent)}
+  button.opt small{display:block;font-size:9px;opacity:.7;font-weight:400;margin-top:2px}
+  button.opt.on small{opacity:.8}
+
+  .preset-row{display:flex;gap:6px;flex-wrap:wrap}
+  button.chip{font-family:inherit;font-size:10.5px;color:var(--txt);
+    background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:20px;
+    padding:6px 12px;cursor:pointer;transition:.16s}
+  button.chip:hover{border-color:var(--accent);color:var(--accent)}
+
+  .field{margin-bottom:13px}
+  .field:last-child{margin-bottom:0}
+  .field .row{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+  .field label{font-size:11px;color:var(--txt)}
+  .field .val{font-size:10.5px;color:var(--accent);font-variant-numeric:tabular-nums}
+
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:3px;
+    background:var(--line-strong);border-radius:3px;outline:none;cursor:pointer}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;
+    border-radius:50%;background:var(--txt);border:3px solid var(--panel-solid);
+    box-shadow:0 0 0 1px var(--line-strong);transition:.14s}
+  input[type=range]::-webkit-slider-thumb:hover{background:var(--accent);transform:scale(1.12)}
+  input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;
+    background:var(--txt);border:3px solid var(--panel-solid);cursor:pointer}
+
+  .swrap{display:flex;gap:6px;flex-wrap:wrap}
+  .swatch{width:30px;height:30px;border-radius:8px;cursor:pointer;border:2px solid transparent;
+    transition:.14s;position:relative}
+  .swatch:hover{transform:scale(1.08)}
+  .swatch.on{border-color:#fff;box-shadow:0 0 0 1px var(--bg),0 4px 14px -4px rgba(0,0,0,.6)}
+
+  .toggle{display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+  .switch{width:38px;height:21px;border-radius:21px;background:var(--line-strong);
+    position:relative;transition:.2s;flex:none}
+  .switch::after{content:"";position:absolute;top:2px;left:2px;width:17px;height:17px;
+    border-radius:50%;background:var(--txt);transition:.2s}
+  .switch.on{background:var(--accent)}
+  .switch.on::after{transform:translateX(17px);background:var(--accent-ink)}
+
+  textarea{width:100%;height:62px;resize:vertical;background:rgba(0,0,0,.3);color:var(--txt);
+    border:1px solid var(--line);border-radius:9px;padding:9px;font-family:inherit;
+    font-size:10px;line-height:1.4;outline:none}
+  textarea:focus{border-color:var(--accent)}
+  .filebtn{display:block;text-align:center;font-size:11px;padding:9px;border:1px dashed var(--line-strong);
+    border-radius:9px;color:var(--dim);cursor:pointer;transition:.16s;margin-top:7px}
+  .filebtn:hover{border-color:var(--accent);color:var(--accent)}
+  .err{color:#ff8a8a;font-size:10px;margin-top:7px;display:none}
+
+  .actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:4px}
+  button.act{font-family:inherit;font-size:11px;letter-spacing:.04em;text-transform:uppercase;
+    padding:11px;border-radius:10px;cursor:pointer;transition:.16s;border:1px solid var(--line)}
+  button.act.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);
+    font-weight:600}
+  button.act.primary:hover{box-shadow:0 6px 20px -6px var(--accent)}
+  button.act.ghost{background:transparent;color:var(--txt)}
+  button.act.ghost:hover{border-color:var(--line-strong);background:rgba(255,255,255,.05)}
+
+  /* floating toggle when panel hidden */
+  #fab{position:fixed;top:16px;right:16px;z-index:9;width:46px;height:46px;border-radius:13px;
+    background:var(--panel);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    border:1px solid var(--line);color:var(--txt);cursor:pointer;display:none;
+    align-items:center;justify-content:center;font-size:18px;
+    box-shadow:0 16px 40px -14px rgba(0,0,0,.6)}
+  #fab:hover{border-color:var(--accent);color:var(--accent)}
+
+  .hint{font-size:9.5px;color:var(--dim);line-height:1.5;margin-top:10px}
+  .loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+    z-index:20;background:var(--bg);font-family:"Instrument Serif",serif;font-size:22px;
+    color:var(--dim);transition:opacity .5s}
+  .loading.gone{opacity:0;pointer-events:none}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div class="loading" id="loading">rendering…</div>
+
+<button id="fab" title="Panel zeigen">⚙</button>
+
+<div id="panel">
+  <div class="brand"><span class="dot"></span><h1>SVG&nbsp;→&nbsp;3D</h1></div>
+  <div class="sub">Realtime Render Backgrounds</div>
+
+  <div class="group">
+    <div class="glabel">Form / Quelle</div>
+    <div class="preset-row" id="presets"></div>
+    <textarea id="svgInput" placeholder="…oder SVG-Code hier einfügen (paths, rect, circle, polygon)"></textarea>
+    <label class="filebtn" for="svgFile">SVG-Datei wählen ↑</label>
+    <input type="file" id="svgFile" accept=".svg,image/svg+xml" hidden />
+    <div class="err" id="err"></div>
+  </div>
+
+  <div class="group">
+    <div class="glabel">Renderlook</div>
+    <div class="seg four" id="looks">
+      <button class="opt on" data-look="glass">Glas<small>Transmission</small></button>
+      <button class="opt" data-look="clay">Clay<small>matt / soft</small></button>
+      <button class="opt" data-look="chrome">Chrome<small>metallic</small></button>
+      <button class="opt" data-look="gradient">Gradient<small>flach</small></button>
+    </div>
+    <div class="field" style="margin-top:13px"><div class="row"><label>Oberfläche · glatt → matt</label><span class="val" id="vSurf"></span></div>
+      <input type="range" id="surf" min="0" max="100" step="1" value="30"></div>
+  </div>
+
+  <div class="group">
+    <div class="glabel">Aufbau</div>
+    <div class="seg" id="modes" style="grid-template-columns:1fr 1fr 1fr">
+      <button class="opt on" data-mode="free">Frei<small>schwebend</small></button>
+      <button class="opt" data-mode="emboss">Erhaben<small>Relief</small></button>
+      <button class="opt" data-mode="deboss">Vertieft<small>graviert</small></button>
+    </div>
+    <div class="seg" id="shading" style="grid-template-columns:1fr 1fr;margin-top:8px">
+      <button class="opt on" data-shading="smooth">Glatt<small>Stufen verstecken</small></button>
+      <button class="opt" data-shading="flat">Facettiert<small>Stufen zeigen</small></button>
+    </div>
+    <div class="field" style="margin-top:11px"><div class="row"><label>Plattengröße · Erhaben/Vertieft</label><span class="val" id="vPlate"></span></div>
+      <input type="range" id="plate" min="0" max="100" step="1" value="30"></div>
+    <div class="toggle" id="infiniteToggle" style="margin-top:8px">
+      <label style="cursor:pointer">Unendliche Prägefläche</label>
+      <div class="switch" id="infiniteSwitch"></div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="glabel">Grundplatte (Bühne)</div>
+    <div class="toggle" id="groundToggle">
+      <label style="cursor:pointer">Grundplatte anzeigen</label>
+      <div class="switch" id="groundSwitch"></div>
+    </div>
+    <div class="seg" id="groundOrient" style="grid-template-columns:1fr 1fr;margin-top:9px">
+      <button class="opt on" data-orient="wall">Wand<small>hinter Form</small></button>
+      <button class="opt" data-orient="floor">Boden<small>unter Form</small></button>
+    </div>
+    <div class="field" style="margin-top:11px"><div class="row"><label>Größe</label><span class="val" id="vGroundSize"></span></div>
+      <input type="range" id="groundSize" min="20" max="200" step="1" value="60"></div>
+    <div class="field"><div class="row"><label>Abstand</label><span class="val" id="vGroundDist"></span></div>
+      <input type="range" id="groundDist" min="0" max="100" step="1" value="40"></div>
+    <div class="toggle" id="groundTexToggle" style="margin-top:4px">
+      <label style="cursor:pointer">Textur auf Platte zeigen</label>
+      <div class="switch on" id="groundTexSwitch"></div>
+    </div>
+    <div class="hint">Platte zeigt die Textur flach (einmal, formatkorrekt) — unabhängig vom Mapping-Modus der Form.</div>
+  </div>
+
+  <div class="group">
+    <div class="glabel">Geometrie</div>
+    <div class="field"><div class="row"><label>Tiefe</label><span class="val" id="vDepth"></span></div>
+      <input type="range" id="depth" min="0" max="80" step="1" value="10"></div>
+    <div class="field"><div class="row"><label>Kantenrundung · alle Modi</label><span class="val" id="vBevel"></span></div>
+      <input type="range" id="bevel" min="0" max="100" step="1" value="15"></div>
+    <div class="field"><div class="row"><label>Layer-Tiefe (Z-Spread)</label><span class="val" id="vSpread"></span></div>
+      <input type="range" id="spread" min="0" max="120" step="1" value="35"></div>
+    <div class="field"><div class="row"><label>Relief-Tiefe · Erhaben/Vertieft</label><span class="val" id="vPdepth"></span></div>
+      <input type="range" id="pdepth" min="0" max="100" step="1" value="15"></div>
+    <div class="field"><div class="row"><label>Neigung</label><span class="val" id="vTilt"></span></div>
+      <input type="range" id="tilt" min="-40" max="40" step="1" value="18"></div>
+  </div>
+
+  <div class="group">
+    <div class="glabel">Rotation (Szene)</div>
+    <div class="field"><div class="row"><label>X-Achse (kippen)</label><span class="val" id="vRotX"></span></div>
+      <input type="range" id="rotX" min="-180" max="180" step="1" value="0"></div>
+    <div class="field"><div class="row"><label>Y-Achse (drehen)</label><span class="val" id="vRotY"></span></div>
+      <input type="range" id="rotY" min="-180" max="180" step="1" value="0"></div>
+    <div class="field"><div class="row"><label>Z-Achse (rollen)</label><span class="val" id="vRotZ"></span></div>
+      <input type="range" id="rotZ" min="-180" max="180" step="1" value="0"></div>
+    <button class="act ghost" id="resetRotBtn" style="width:100%;margin-top:4px">Rotation zurücksetzen ⟲</button>
+  </div>
+
+  <div class="group">
+    <div class="glabel">Farbe</div>
+    <div class="swrap" id="palette"></div>
+    <div class="field" style="margin-top:11px"><div class="row">
+      <label style="display:flex;align-items:center;gap:8px"><input type="color" id="customColor" value="#8af7d2" style="width:22px;height:22px;border:none;border-radius:6px;background:none;cursor:pointer;padding:0"> Eigene Formfarbe</label>
+      <span class="val" id="customColorHex">#8af7d2</span></div></div>
+  </div>
+
+  <div class="group">
+    <div class="glabel">Textur</div>
+    <label class="filebtn" for="texFile">Bild als Textur laden ↑</label>
+    <input type="file" id="texFile" accept="image/*" hidden />
+    <div class="err" id="texErr"></div>
+    <div class="seg" id="mapModes" style="grid-template-columns:1fr 1fr;margin-top:9px">
+      <button class="opt on" data-mapmode="uv">UV<small>flach/planar</small></button>
+      <button class="opt" data-mapmode="triplanar">Triplanar<small>allseitig</small></button>
+      <button class="opt" data-mapmode="frontal">Frontal<small>zur Kamera</small></button>
+      <button class="opt" data-mapmode="sphere">Kugel<small>sphärisch</small></button>
+    </div>
+    <div class="field" style="margin-top:11px"><div class="row"><label>Skalierung</label><span class="val" id="vTexScale"></span></div>
+      <input type="range" id="texScale" min="10" max="400" step="1" value="100"></div>
+    <div class="field"><div class="row"><label>Drehung</label><span class="val" id="vTexRot"></span></div>
+      <input type="range" id="texRot" min="-180" max="180" step="1" value="0"></div>
+    <div class="field"><div class="row"><label>Versatz X</label><span class="val" id="vTexX"></span></div>
+      <input type="range" id="texX" min="-100" max="100" step="1" value="0"></div>
+    <div class="field"><div class="row"><label>Versatz Y</label><span class="val" id="vTexY"></span></div>
+      <input type="range" id="texY" min="-100" max="100" step="1" value="0"></div>
+    <div class="field"><div class="row"><label>Deckkraft</label><span class="val" id="vTexOp"></span></div>
+      <input type="range" id="texOp" min="0" max="100" step="1" value="100"></div>
+    <div class="field"><div class="row"><label>Weichzeichnen</label><span class="val" id="vTexBlur"></span></div>
+      <input type="range" id="texBlur" min="0" max="100" step="1" value="0"></div>
+    <button class="act ghost" id="texClearBtn" style="width:100%">Textur entfernen</button>
+  </div>
+
+  <div class="group">
+    <div class="glabel">Hintergrund</div>
+    <div class="swrap" id="bgpresets"></div>
+    <div class="field" style="margin-top:11px"><div class="row">
+      <label style="display:flex;align-items:center;gap:8px"><input type="color" id="bgColTop" value="#1b2735" style="width:22px;height:22px;border:none;border-radius:6px;background:none;cursor:pointer;padding:0"> Oben</label>
+      <label style="display:flex;align-items:center;gap:8px"><input type="color" id="bgColMid" value="#0a0e16" style="width:22px;height:22px;border:none;border-radius:6px;background:none;cursor:pointer;padding:0"> Mitte</label>
+      <label style="display:flex;align-items:center;gap:8px"><input type="color" id="bgColBot" value="#2d1b3d" style="width:22px;height:22px;border:none;border-radius:6px;background:none;cursor:pointer;padding:0"> Akzent</label>
+    </div></div>
+  </div>
+
+  <div class="group">
+    <div class="glabel">Beleuchtung · Grund</div>
+    <div class="glabel" style="margin-bottom:8px;letter-spacing:.1em;text-transform:none;color:var(--txt);font-size:11px">HDR-Umgebung</div>
+    <div class="preset-row" id="hdrPresets" style="margin-bottom:9px"></div>
+    <label class="filebtn" for="hdrFile">Eigene .hdr-Datei laden ↑</label>
+    <input type="file" id="hdrFile" accept=".hdr,image/vnd.radiance" hidden />
+    <div class="err" id="hdrErr"></div>
+    <div class="field" style="margin-top:13px"><div class="row"><label>Grundhelligkeit</label><span class="val" id="vAmbient"></span></div>
+      <input type="range" id="ambient" min="0" max="100" step="1" value="25"></div>
+    <div class="field"><div class="row"><label>Hauptlicht</label><span class="val" id="vKey"></span></div>
+      <input type="range" id="keyInt" min="0" max="200" step="1" value="100"></div>
+    <div class="field"><div class="row"><label>Reflexionen / HDR-Stärke</label><span class="val" id="vEnv"></span></div>
+      <input type="range" id="envInt" min="0" max="200" step="1" value="100"></div>
+    <div class="toggle" id="aoToggle" style="margin-top:6px">
+      <label style="cursor:pointer">Ambient Occlusion (AO)</label>
+      <div class="switch" id="aoSwitch"></div>
+    </div>
+    <div class="err" id="aoErr"></div>
+    <div class="field" style="margin-top:11px"><div class="row"><label>AO-Stärke</label><span class="val" id="vAo"></span></div>
+      <input type="range" id="aoStrength" min="0" max="100" step="1" value="60"></div>
+    <div class="field"><div class="row"><label>AO-Radius</label><span class="val" id="vAoR"></span></div>
+      <input type="range" id="aoRadius" min="1" max="24" step="1" value="8"></div>
+  </div>
+
+  <div class="group">
+    <div class="glabel">Akzentlicht A</div>
+    <div class="field"><div class="row">
+      <label style="display:flex;align-items:center;gap:8px"><input type="color" id="lightAcol" value="#ff4d6d" style="width:22px;height:22px;border:none;border-radius:6px;background:none;cursor:pointer;padding:0"> Intensität</label>
+      <span class="val" id="vLightA"></span></div>
+      <input type="range" id="lightAint" min="0" max="100" step="1" value="0"></div>
+    <div class="field"><div class="row"><label>Richtung (um die Form)</label><span class="val" id="vLightAang"></span></div>
+      <input type="range" id="lightAang" min="-180" max="180" step="1" value="35"></div>
+    <div class="field"><div class="row"><label>Höhe</label><span class="val" id="vLightAelev"></span></div>
+      <input type="range" id="lightAelev" min="-80" max="80" step="1" value="20"></div>
+  </div>
+
+  <div class="group">
+    <div class="glabel">Akzentlicht B</div>
+    <div class="field"><div class="row">
+      <label style="display:flex;align-items:center;gap:8px"><input type="color" id="lightBcol" value="#4d8bff" style="width:22px;height:22px;border:none;border-radius:6px;background:none;cursor:pointer;padding:0"> Intensität</label>
+      <span class="val" id="vLightB"></span></div>
+      <input type="range" id="lightBint" min="0" max="100" step="1" value="0"></div>
+    <div class="field"><div class="row"><label>Richtung (um die Form)</label><span class="val" id="vLightBang"></span></div>
+      <input type="range" id="lightBang" min="-180" max="180" step="1" value="-50"></div>
+    <div class="field"><div class="row"><label>Höhe</label><span class="val" id="vLightBelev"></span></div>
+      <input type="range" id="lightBelev" min="-80" max="80" step="1" value="-15"></div>
+    <div class="toggle" id="lightOrbitToggle" style="margin-top:4px">
+      <label style="cursor:pointer">Akzentlichter langsam kreisen</label>
+      <div class="switch" id="lightOrbitSwitch"></div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="glabel">Kamera & Bewegung</div>
+    <div class="field"><div class="row"><label>Idle-Schwebe-Tempo</label><span class="val" id="vPar"></span></div>
+      <input type="range" id="parallax" min="0" max="100" step="1" value="55"></div>
+    <div class="toggle" id="driftToggle" style="margin-top:4px">
+      <label style="cursor:pointer">Leichtes Idle-Schweben</label>
+      <div class="switch" id="driftSwitch"></div>
+    </div>
+    <button class="act ghost" id="resetCamBtn" style="width:100%;margin-top:11px">Ansicht zurücksetzen ⟲</button>
+    <div class="hint">Ziehen = drehen · zwei Finger / Mausrad = zoomen · zwei Finger schieben = verschieben · Doppeltipp = zurücksetzen</div>
+  </div>
+
+  <div class="group">
+    <div class="glabel">Ausgabe</div>
+    <div class="actions">
+      <button class="act primary" id="exportBtn">PNG ↓</button>
+      <button class="act ghost" id="exportAlphaBtn">PNG · transparent</button>
+    </div>
+    <button class="act ghost" id="hideBtn" style="width:100%;margin-top:7px">Panel ausblenden ↗</button>
+    <div class="hint">„PNG · transparent" exportiert die Form ohne Hintergrund fürs Compositing.</div>
+  </div>
+</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+
+/* ============================================================
+   1 · SVG PATH PARSER  (validated in Node against curves,
+   holes, arcs, relative cmds, smooth curves, multi-shape)
+   ============================================================ */
+function tokenizePath(d){
+  const t=[],re=/([MmLlHhVvCcSsQqTtAaZz])|(-?\d*\.?\d+(?:[eE][-+]?\d+)?)/g;let m;
+  while((m=re.exec(d))!==null){ if(m[1])t.push({cmd:m[1]}); else t.push({num:parseFloat(m[2])}); }
+  return t;
+}
+function arcToPath(path,x0,y0,rx,ry,xAngleDeg,largeArc,sweep,x,y){
+  if(rx===0||ry===0){path.lineTo(x,y);return;}
+  const phi=xAngleDeg*Math.PI/180,cosP=Math.cos(phi),sinP=Math.sin(phi);
+  const dx=(x0-x)/2,dy=(y0-y)/2,x1p=cosP*dx+sinP*dy,y1p=-sinP*dx+cosP*dy;
+  rx=Math.abs(rx);ry=Math.abs(ry);
+  let lambda=x1p*x1p/(rx*rx)+y1p*y1p/(ry*ry);
+  if(lambda>1){const s=Math.sqrt(lambda);rx*=s;ry*=s;}
+  const sign=largeArc!==sweep?1:-1;
+  let num=rx*rx*ry*ry-rx*rx*y1p*y1p-ry*ry*x1p*x1p, den=rx*rx*y1p*y1p+ry*ry*x1p*x1p;
+  let co=sign*Math.sqrt(Math.max(0,num/den));
+  const cxp=co*rx*y1p/ry, cyp=-co*ry*x1p/rx;
+  const cx=cosP*cxp-sinP*cyp+(x0+x)/2, cy=sinP*cxp+cosP*cyp+(y0+y)/2;
+  const ang=(ux,uy,vx,vy)=>{const dot=ux*vx+uy*vy,len=Math.sqrt((ux*ux+uy*uy)*(vx*vx+vy*vy));
+    let a=Math.acos(Math.min(1,Math.max(-1,dot/len)));if(ux*vy-uy*vx<0)a=-a;return a;};
+  let theta1=ang(1,0,(x1p-cxp)/rx,(y1p-cyp)/ry);
+  let dTheta=ang((x1p-cxp)/rx,(y1p-cyp)/ry,(-x1p-cxp)/rx,(-y1p-cyp)/ry);
+  if(!sweep&&dTheta>0)dTheta-=2*Math.PI;
+  if(sweep&&dTheta<0)dTheta+=2*Math.PI;
+  path.absellipse(cx,cy,rx,ry,theta1,theta1+dTheta,!sweep,phi);
+}
+function parsePathData(d){
+  const t=tokenizePath(d),subpaths=[];let cur=null,x=0,y=0,startX=0,startY=0,i=0,cmd=null,prevCtrl=null,prevCmd=null;
+  function newSub(px,py){cur=new THREE.Path();cur.moveTo(px,py);subpaths.push({path:cur});}
+  const next=()=>t[i++].num;
+  while(i<t.length){
+    if(t[i].cmd){cmd=t[i].cmd;i++;}
+    const abs=cmd===cmd.toUpperCase(),C=cmd.toUpperCase();
+    if(C==='M'){let nx=next(),ny=next();if(!abs){nx+=x;ny+=y;}x=nx;y=ny;startX=x;startY=y;newSub(x,y);
+      while(i<t.length&&t[i].num!==undefined){let lx=next(),ly=next();if(!abs){lx+=x;ly+=y;}x=lx;y=ly;cur.lineTo(x,y);}}
+    else if(C==='L'){let nx=next(),ny=next();if(!abs){nx+=x;ny+=y;}x=nx;y=ny;cur.lineTo(x,y);}
+    else if(C==='H'){let nx=next();if(!abs)nx+=x;x=nx;cur.lineTo(x,y);}
+    else if(C==='V'){let ny=next();if(!abs)ny+=y;y=ny;cur.lineTo(x,y);}
+    else if(C==='C'){let x1=next(),y1=next(),x2=next(),y2=next(),nx=next(),ny=next();
+      if(!abs){x1+=x;y1+=y;x2+=x;y2+=y;nx+=x;ny+=y;}cur.bezierCurveTo(x1,y1,x2,y2,nx,ny);prevCtrl=[x2,y2];x=nx;y=ny;}
+    else if(C==='S'){let x2=next(),y2=next(),nx=next(),ny=next();if(!abs){x2+=x;y2+=y;nx+=x;ny+=y;}
+      let x1=x,y1=y;if(prevCmd&&'CS'.includes(prevCmd.toUpperCase())&&prevCtrl){x1=2*x-prevCtrl[0];y1=2*y-prevCtrl[1];}
+      cur.bezierCurveTo(x1,y1,x2,y2,nx,ny);prevCtrl=[x2,y2];x=nx;y=ny;}
+    else if(C==='Q'){let x1=next(),y1=next(),nx=next(),ny=next();if(!abs){x1+=x;y1+=y;nx+=x;ny+=y;}
+      cur.quadraticCurveTo(x1,y1,nx,ny);prevCtrl=[x1,y1];x=nx;y=ny;}
+    else if(C==='T'){let nx=next(),ny=next();if(!abs){nx+=x;ny+=y;}let x1=x,y1=y;
+      if(prevCmd&&'QT'.includes(prevCmd.toUpperCase())&&prevCtrl){x1=2*x-prevCtrl[0];y1=2*y-prevCtrl[1];}
+      cur.quadraticCurveTo(x1,y1,nx,ny);prevCtrl=[x1,y1];x=nx;y=ny;}
+    else if(C==='A'){let rx=next(),ry=next(),rot=next(),laf=next(),sf=next(),nx=next(),ny=next();
+      if(!abs){nx+=x;ny+=y;}arcToPath(cur,x,y,rx,ry,rot,laf,sf,nx,ny);x=nx;y=ny;}
+    else if(C==='Z'){cur.closePath();x=startX;y=startY;}
+    prevCmd=cmd;
+  }
+  return subpaths;
+}
+function pointInPoly(pt,pts){let inside=false;
+  for(let k=0,j=pts.length-1;k<pts.length;j=k++){const xi=pts[k].x,yi=pts[k].y,xj=pts[j].x,yj=pts[j].y;
+    if(((yi>pt.y)!==(yj>pt.y))&&(pt.x<(xj-xi)*(pt.y-yi)/(yj-yi)+xi))inside=!inside;}return inside;}
+function subpathsToShapes(subpaths){
+  const loops=subpaths.map(s=>{const pts=s.path.getPoints(24);
+    let a=Infinity,b=Infinity,c=-Infinity,d=-Infinity;
+    for(const p of pts){if(p.x<a)a=p.x;if(p.y<b)b=p.y;if(p.x>c)c=p.x;if(p.y>d)d=p.y;}
+    const w=c-a,h=d-b;return{path:s.path,pts,bboxArea:w*h,diag:Math.hypot(w,h),sample:pts[0]};})
+    .filter(l=>l.pts.length>2&&l.diag>1e-3);
+  loops.sort((a,b)=>b.bboxArea-a.bboxArea);
+  const shapes=[],used=new Array(loops.length).fill(false);
+  for(let a=0;a<loops.length;a++){if(used[a])continue;
+    const shape=new THREE.Shape();shape.curves=loops[a].path.curves.slice();shape.autoClose=true;used[a]=true;
+    for(let b=a+1;b<loops.length;b++){if(used[b])continue;
+      if(pointInPoly(loops[b].sample,loops[a].pts)){const hole=new THREE.Path();hole.curves=loops[b].path.curves.slice();shape.holes.push(hole);used[b]=true;}}
+    shapes.push(shape);}
+  return shapes;
+}
+// primitive elements -> shapes
+function rectShape(x,y,w,h,rx,ry){
+  rx=rx||0;ry=ry||rx;rx=Math.min(rx,w/2);ry=Math.min(ry,h/2);const s=new THREE.Shape();
+  if(rx<=0&&ry<=0){s.moveTo(x,y);s.lineTo(x+w,y);s.lineTo(x+w,y+h);s.lineTo(x,y+h);s.closePath();return s;}
+  s.moveTo(x+rx,y);s.lineTo(x+w-rx,y);s.absellipse(x+w-rx,y+ry,rx,ry,-Math.PI/2,0,false);
+  s.lineTo(x+w,y+h-ry);s.absellipse(x+w-rx,y+h-ry,rx,ry,0,Math.PI/2,false);
+  s.lineTo(x+rx,y+h);s.absellipse(x+rx,y+h-ry,rx,ry,Math.PI/2,Math.PI,false);
+  s.lineTo(x,y+ry);s.absellipse(x+rx,y+ry,rx,ry,Math.PI,Math.PI*1.5,false);s.closePath();return s;
+}
+function ellipseShape(cx,cy,rx,ry){const s=new THREE.Shape();s.absellipse(cx,cy,rx,ry,0,Math.PI*2,false);return s;}
+function polyShape(points,close){const nums=points.trim().split(/[\s,]+/).map(Number);const s=new THREE.Shape();
+  for(let k=0;k<nums.length-1;k+=2){if(k===0)s.moveTo(nums[k],nums[k+1]);else s.lineTo(nums[k],nums[k+1]);}
+  if(close)s.closePath();return s;}
+
+// --- 2D affine transform helpers ---
+const IDENT=[1,0,0,1,0,0];
+function matMul(m1,m2){return [
+  m1[0]*m2[0]+m1[2]*m2[1], m1[1]*m2[0]+m1[3]*m2[1],
+  m1[0]*m2[2]+m1[2]*m2[3], m1[1]*m2[2]+m1[3]*m2[3],
+  m1[0]*m2[4]+m1[2]*m2[5]+m1[4], m1[1]*m2[4]+m1[3]*m2[5]+m1[5]];}
+function parseTransform(str){
+  let m=IDENT.slice();const re=/([a-zA-Z]+)\s*\(([^)]*)\)/g;let t;
+  while((t=re.exec(str))){const fn=t[1];const a=t[2].trim().split(/[\s,]+/).map(Number);let lm=IDENT.slice();
+    if(fn==='translate')lm=[1,0,0,1,a[0]||0,a[1]||0];
+    else if(fn==='scale')lm=[a[0]||1,0,0,(a.length>1?a[1]:a[0])||1,0,0];
+    else if(fn==='rotate'){const ang=(a[0]||0)*Math.PI/180,c=Math.cos(ang),s=Math.sin(ang);
+      if(a.length>=3){const cx=a[1],cy=a[2];lm=matMul([1,0,0,1,cx,cy],matMul([c,s,-s,c,0,0],[1,0,0,1,-cx,-cy]));}
+      else lm=[c,s,-s,c,0,0];}
+    else if(fn==='matrix')lm=[a[0],a[1],a[2],a[3],a[4],a[5]];
+    else if(fn==='skewX'){const ang=(a[0]||0)*Math.PI/180;lm=[1,0,Math.tan(ang),1,0,0];}
+    else if(fn==='skewY'){const ang=(a[0]||0)*Math.PI/180;lm=[1,Math.tan(ang),0,1,0,0];}
+    m=matMul(m,lm);}
+  return m;}
+function isIdentity(m){return m[0]===1&&m[1]===0&&m[2]===0&&m[3]===1&&m[4]===0&&m[5]===0;}
+function toMatrix4(m){const M=new THREE.Matrix4();M.set(m[0],m[2],0,m[4], m[1],m[3],0,m[5], 0,0,1,0, 0,0,0,1);return M;}
+function applyMat2D(m,x,y){return [m[0]*x+m[2]*y+m[4], m[1]*x+m[3]*y+m[5]];}
+// rebuild a shape (outline + holes) under a 2D affine transform (polygonal, but dense)
+function transformShape(shape,m){
+  const ns=new THREE.Shape();const ep=shape.extractPoints(24);
+  ep.shape.forEach((p,i)=>{const[x,y]=applyMat2D(m,p.x,p.y);i?ns.lineTo(x,y):ns.moveTo(x,y);});
+  ns.closePath();
+  ep.holes.forEach(hp=>{const h=new THREE.Path();
+    hp.forEach((p,i)=>{const[x,y]=applyMat2D(m,p.x,p.y);i?h.lineTo(x,y):h.moveTo(x,y);});
+    h.closePath();ns.holes.push(h);});
+  return ns;
+}
+
+function elementShapes(el){
+  const tag=el.tagName.toLowerCase();const n=a=>+el.getAttribute(a)||0;
+  if(tag==='path'){const d=el.getAttribute('d');if(d){const s=subpathsToShapes(parsePathData(d));return s.length?s:null;}return null;}
+  if(tag==='rect')return [rectShape(n('x'),n('y'),n('width'),n('height'),n('rx'),n('ry'))];
+  if(tag==='circle')return [ellipseShape(n('cx'),n('cy'),n('r'),n('r'))];
+  if(tag==='ellipse')return [ellipseShape(n('cx'),n('cy'),n('rx'),n('ry'))];
+  if(tag==='polygon'||tag==='polyline'){const p=el.getAttribute('points');return p?[polyShape(p,true)]:null;}
+  return null;
+}
+// Recursively walk the SVG tree, accumulating transforms from <g> wrappers and
+// element transforms. Transforms are baked into the shapes so both build modes work.
+function walk(node,parentMat,out){
+  for(const el of node.children){
+    if(!el.tagName)continue;
+    const tf=el.getAttribute('transform');
+    const mat=tf?matMul(parentMat,parseTransform(tf)):parentMat;
+    const shapes=elementShapes(el);
+    if(shapes)out.push(isIdentity(mat)?shapes:shapes.map(s=>transformShape(s,mat)));
+    if(el.children&&el.children.length)walk(el,mat,out);
+  }
+}
+// Parse full SVG -> ordered array of shape-arrays (one entry per drawable element)
+function parseSVG(svgText){
+  const doc=new DOMParser().parseFromString(svgText,'image/svg+xml');
+  if(doc.querySelector('parsererror'))throw new Error('SVG ließ sich nicht parsen.');
+  const svg=doc.querySelector('svg');if(!svg)throw new Error('Kein <svg>-Element gefunden.');
+  const out=[];walk(svg,IDENT.slice(),out);
+  if(!out.length)throw new Error('Keine nutzbaren Formen gefunden (path / rect / circle / polygon).');
+  return out;
+}
+
+/* ============================================================
+   2 · BUILT-IN PRESETS
+   ============================================================ */
+const PRESETS={
+  Blob:`<svg viewBox="0 0 200 200"><path d="M100,18 C150,18 184,55 184,104 C184,150 150,182 102,182 C52,182 18,150 18,108 C18,52 50,18 100,18 Z"/></svg>`,
+  Ring:`<svg viewBox="0 0 200 200"><path d="M100,12 A88,88 0 1 0 100,188 A88,88 0 1 0 100,12 Z M100,58 A42,42 0 1 1 100,142 A42,42 0 1 1 100,58 Z"/></svg>`,
+  Stack:`<svg viewBox="0 0 220 200"><circle cx="70" cy="78" r="50"/><rect x="92" y="92" width="96" height="96" rx="26"/><path d="M150,20 l40,0 l0,40 a40,40 0 0 1 -40,-40 Z"/></svg>`,
+  Spark:`<svg viewBox="0 0 200 200"><path d="M100,8 C108,60 140,92 192,100 C140,108 108,140 100,192 C92,140 60,108 8,100 C60,92 92,60 100,8 Z"/></svg>`,
+  Wave:`<svg viewBox="0 0 240 160"><path d="M20,90 q30,-70 60,0 t60,0 t60,0 t40,0 l0,46 q-30,30 -60,0 t-60,0 t-60,0 t-40,0 Z"/></svg>`,
+};
+
+/* ============================================================
+   3 · SCENE
+   ============================================================ */
+const stage=document.getElementById('stage');
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true,alpha:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.setSize(window.innerWidth,window.innerHeight);
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.05;
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+stage.appendChild(renderer.domElement);
+
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(42,window.innerWidth/window.innerHeight,0.1,100);
+camera.position.set(0,0,7.2);
+
+// orbit camera model (azimuth theta, polar phi, radius) with damping
+const cam={
+  theta:0,phi:1.2,radius:7.6,target:new THREE.Vector3(0,0,0),
+  cTheta:0,cPhi:1.2,cRadius:7.6,cTarget:new THREE.Vector3(0,0,0),
+  restTheta:0,restPhi:1.2,restRadius:7.6,
+};
+function applyCam(){
+  const sp=Math.sin(cam.cPhi);
+  camera.position.set(
+    cam.cTarget.x + cam.cRadius*sp*Math.sin(cam.cTheta),
+    cam.cTarget.y + cam.cRadius*Math.cos(cam.cPhi),
+    cam.cTarget.z + cam.cRadius*sp*Math.cos(cam.cTheta));
+  camera.lookAt(cam.cTarget);
+}
+
+// lights (supplement the IBL environment)
+const key=new THREE.DirectionalLight(0xffffff,2.0);key.position.set(4,6,8);scene.add(key);
+const rim=new THREE.DirectionalLight(0x9fb8ff,1.1);rim.position.set(-6,-2,-4);scene.add(rim);
+const amb=new THREE.HemisphereLight(0xffffff,0x404048,0.25);scene.add(amb);
+// two steerable coloured accent lights (point lights near the shape)
+const accentA=new THREE.PointLight(0xff4d6d,0,40,1.4);accentA.position.set(6,3,5);scene.add(accentA);
+const accentB=new THREE.PointLight(0x4d8bff,0,40,1.4);accentB.position.set(-6,-2,4);scene.add(accentB);
+
+/* ---- HDR environment lighting (real float range → proper metal highlights) ---- */
+const pmrem=new THREE.PMREMGenerator(renderer);pmrem.compileEquirectangularShader();
+let currentEnvTex=null; // the raw equirect texture currently feeding the env
+
+// procedural HDR presets: equirectangular Float32 data with real >1.0 highlights
+const HDR_PRESETS={
+  studio:{label:'Studio',sky:[0.55,0.57,0.62],hor:[0.38,0.39,0.42],gnd:[0.10,0.10,0.11],
+    lights:[{az:0.6,el:0.55,sx:0.55,sy:0.42,int:9,col:[1,1,1]},
+            {az:-1.25,el:0.25,sx:0.75,sy:0.5,int:4.5,col:[0.88,0.93,1]},
+            {az:2.5,el:-0.05,sx:0.65,sy:0.6,int:3,col:[1,0.96,0.88]}]},
+  softbox:{label:'Softbox',sky:[0.7,0.71,0.74],hor:[0.5,0.5,0.52],gnd:[0.18,0.18,0.19],
+    lights:[{az:0.9,el:0.4,sx:0.9,sy:0.7,int:6,col:[1,1,1]},
+            {az:-0.9,el:0.4,sx:0.9,sy:0.7,int:6,col:[1,1,1]}]},
+  sunset:{label:'Sonnenuntergang',sky:[0.22,0.28,0.5],hor:[1.0,0.52,0.26],gnd:[0.14,0.09,0.11],
+    lights:[{az:0.2,el:0.06,sx:0.55,sy:0.32,int:16,col:[1,0.62,0.32]},
+            {az:2.8,el:0.4,sx:0.9,sy:0.7,int:2,col:[0.5,0.6,1]}]},
+  night:{label:'Nacht-Stadt',sky:[0.04,0.05,0.09],hor:[0.10,0.11,0.16],gnd:[0.02,0.02,0.03],
+    lights:[{az:-0.5,el:0.15,sx:0.18,sy:0.5,int:10,col:[1,0.5,0.3]},
+            {az:1.1,el:0.1,sx:0.15,sy:0.4,int:9,col:[0.3,0.7,1]},
+            {az:2.6,el:0.3,sx:0.2,sy:0.3,int:7,col:[1,0.2,0.5]}]},
+  dawn:{label:'Morgenlicht',sky:[0.45,0.55,0.72],hor:[0.95,0.8,0.6],gnd:[0.16,0.15,0.14],
+    lights:[{az:-0.4,el:0.2,sx:0.6,sy:0.4,int:11,col:[1,0.9,0.7]},
+            {az:1.8,el:0.5,sx:0.8,sy:0.6,int:3,col:[0.7,0.85,1]}]},
+};
+function buildHDRData(P,W,H){
+  const data=new Float32Array(W*H*4);
+  for(let y=0;y<H;y++){
+    const v=y/(H-1), theta=(0.5-v)*Math.PI;
+    for(let x=0;x<W;x++){
+      const u=x/(W-1), phi=(u-0.5)*2*Math.PI;
+      let r,g,b;
+      if(v<0.5){const t=v*2;r=P.sky[0]+(P.hor[0]-P.sky[0])*t;g=P.sky[1]+(P.hor[1]-P.sky[1])*t;b=P.sky[2]+(P.hor[2]-P.sky[2])*t;}
+      else{const t=(v-0.5)*2;r=P.hor[0]+(P.gnd[0]-P.hor[0])*t;g=P.hor[1]+(P.gnd[1]-P.hor[1])*t;b=P.hor[2]+(P.gnd[2]-P.hor[2])*t;}
+      for(const L of P.lights){
+        const dx=Math.atan2(Math.sin(phi-L.az),Math.cos(phi-L.az)), dy=theta-L.el;
+        const fall=Math.exp(-((dx*dx)/(L.sx*L.sx)+(dy*dy)/(L.sy*L.sy)));
+        r+=L.col[0]*L.int*fall;g+=L.col[1]*L.int*fall;b+=L.col[2]*L.int*fall;
+      }
+      const i=(y*W+x)*4;data[i]=r;data[i+1]=g;data[i+2]=b;data[i+3]=1;
+    }
+  }
+  return data;
+}
+function setProceduralHDR(name){
+  const P=HDR_PRESETS[name];if(!P)return;
+  const W=512,H=256;
+  const tex=new THREE.DataTexture(buildHDRData(P,W,H),W,H,THREE.RGBAFormat,THREE.FloatType);
+  tex.mapping=THREE.EquirectangularReflectionMapping;tex.needsUpdate=true;
+  applyEnvTexture(tex,name);
+}
+// load a user .hdr file via RGBELoader (dynamic import; falls back gracefully)
+async function loadHDRFile(file){
+  try{
+    const {RGBELoader}=await import('three/addons/loaders/RGBELoader.js');
+    const url=URL.createObjectURL(file);
+    const loader=new RGBELoader();
+    loader.load(url,(tex)=>{
+      tex.mapping=THREE.EquirectangularReflectionMapping;
+      applyEnvTexture(tex,'datei');
+      URL.revokeObjectURL(url);
+      const err=document.getElementById('hdrErr');if(err)err.style.display='none';
+    },undefined,()=>{
+      const err=document.getElementById('hdrErr');if(err){err.textContent='HDR-Datei konnte nicht geladen werden.';err.style.display='block';}
+    });
+  }catch(e){
+    const err=document.getElementById('hdrErr');
+    if(err){err.textContent='HDR-Loader nicht erreichbar (Internet?). Prozedurale Presets funktionieren weiter.';err.style.display='block';}
+  }
+}
+function applyEnvTexture(tex,sourceName){
+  const env=pmrem.fromEquirectangular(tex).texture;
+  if(currentEnvTex)currentEnvTex.dispose();
+  currentEnvTex=tex;
+  scene.environment=env;
+}
+setProceduralHDR('studio');
+
+
+/* ---- animated gradient background sphere ---- */
+const bgUniforms={
+  uTime:{value:0},
+  uA:{value:new THREE.Color('#1b2735')},
+  uB:{value:new THREE.Color('#0a0e16')},
+  uC:{value:new THREE.Color('#2d1b3d')},
+};
+const bgMat=new THREE.ShaderMaterial({
+  side:THREE.BackSide,depthWrite:false,uniforms:bgUniforms,
+  vertexShader:`varying vec3 vP;void main(){vP=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+  fragmentShader:`varying vec3 vP;uniform float uTime;uniform vec3 uA;uniform vec3 uB;uniform vec3 uC;
+    void main(){vec3 n=normalize(vP);
+      float t=n.y*0.5+0.5;
+      float w=0.5+0.5*sin(uTime*0.15+n.x*2.0+n.y*1.5);
+      vec3 col=mix(uB,uA,smoothstep(0.0,0.75,t));
+      col=mix(col,uC,smoothstep(0.4,1.0,t)*w*0.85);
+      col+=0.04*sin(uTime*0.1+n.x*6.0);
+      gl_FragColor=vec4(col,1.0);}`,
+});
+const bgSphere=new THREE.Mesh(new THREE.SphereGeometry(40,48,32),bgMat);
+scene.add(bgSphere);
+
+/* ---- shape group ---- */
+// pivot holds the user's X/Y/Z rotation; group inside holds scale + y-flip.
+// Keeping them separate avoids the negative-Y scale fighting with rotation.
+const pivot=new THREE.Group();scene.add(pivot);
+let group=new THREE.Group();pivot.add(group);
+let meshes=[];
+let state={
+  look:'glass',mode:'free',depth:10,bevel:15,spread:35,tilt:18,pdepth:15,parallax:55,drift:false,
+  rotX:0,rotY:0,rotZ:0,
+  surf:30,color:'#8af7d2',colorMode:'palette',
+  shading:'smooth',infinite:false,plate:30,
+  ground:false,groundSize:60,groundDist:40,groundOrient:'wall',groundTex:true,
+  ambient:25,keyInt:100,envInt:100,
+  ao:false,aoStrength:60,aoRadius:8,
+  accentA:'#ff4d6d',accentAInt:0,accentAAng:35,accentAElev:20,
+  accentB:'#4d8bff',accentBInt:0,accentBAng:-50,accentBElev:-15,
+  lightOrbit:false,
+};
+
+const PALETTE=['#8af7d2','#7cb8ff','#ff9ecb','#ffd166','#c5a3ff','#ff7a59','#f4f4f5','#5eead4'];
+const BG_SETS=[
+  {a:'#1b2735',b:'#0a0e16',c:'#2d1b3d',name:'Nebula'},
+  {a:'#2b2b2f',b:'#111114',c:'#3a2f24',name:'Carbon'},
+  {a:'#0e2a2a',b:'#06110f',c:'#0a3a44',name:'Teal'},
+  {a:'#241a2e',b:'#0c0913',c:'#3d1f3a',name:'Plum'},
+  {a:'#e9e4da',b:'#cfc8bc',c:'#f3eee6',name:'Bone'},
+];
+
+/* ---- optional surface texture (uploaded image, transformable, multi-mode) ---- */
+let surfaceTex=null; // THREE.Texture or null
+const texState={scale:100,rotation:0,offX:0,offY:0,mode:'uv',opacity:100,blur:0}; // uv|triplanar|sphere|frontal
+const texUniforms={
+  uMapMode:{value:0},
+  uTriScale:{value:new THREE.Vector2(0.01,0.01)},
+  uTriOff:{value:new THREE.Vector2(0,0)},
+  uTexOpacity:{value:1.0},
+  uTexBlur:{value:0.0},
+};
+const MAP_MODE_ID={uv:0,triplanar:1,sphere:2,frontal:3};
+function applyTexTransform(){
+  texUniforms.uMapMode.value=MAP_MODE_ID[texState.mode]||0;
+  texUniforms.uTexOpacity.value=texState.opacity/100;
+  texUniforms.uTexBlur.value=(texState.blur/100)*0.04; // 0 .. 0.04 UV units offset
+  const sc=Math.max(0.05,texState.scale/100);
+  if(surfaceTex){
+    surfaceTex.center.set(0.5,0.5);
+    surfaceTex.repeat.set(1/sc,1/sc);
+    surfaceTex.rotation=THREE.MathUtils.degToRad(texState.rotation);
+    surfaceTex.offset.set(texState.offX/100,texState.offY/100);
+    surfaceTex.needsUpdate=true;
+  }
+  const triScale=0.012/sc;
+  texUniforms.uTriScale.value.set(triScale,triScale);
+  texUniforms.uTriOff.value.set(texState.offX/100,texState.offY/100);
+  // keep the plate's opacity/blur in sync (its mapping stays planar though)
+  groundUniforms.uTexOpacity.value=texState.opacity/100;
+  groundUniforms.uTexBlur.value=(texState.blur/100)*0.02;
+}
+function loadTextureFile(file){
+  const url=URL.createObjectURL(file);
+  new THREE.TextureLoader().load(url,(tex)=>{
+    tex.wrapS=tex.wrapT=THREE.RepeatWrapping;
+    tex.colorSpace=THREE.SRGBColorSpace;
+    if(surfaceTex)surfaceTex.dispose();
+    surfaceTex=tex;
+    makeGroundTex();          // build the plate's own cover-fit copy
+    applyTexTransform();
+    if(currentGroups)rebuild();
+    URL.revokeObjectURL(url);
+    const err=document.getElementById('texErr');if(err)err.style.display='none';
+  },undefined,()=>{
+    const err=document.getElementById('texErr');if(err){err.textContent='Bild konnte nicht geladen werden.';err.style.display='block';}
+  });
+}
+function clearTexture(){
+  if(surfaceTex){surfaceTex.dispose();surfaceTex=null;}
+  if(groundTex){groundTex.dispose();groundTex=null;}
+  if(currentGroups)rebuild();
+}
+
+// The ground plate gets its OWN texture instance + uniforms so it can show the
+// image flat (planar, once, aspect-correct) regardless of the shape's mapping mode.
+let groundTex=null;
+const groundUniforms={
+  uMapMode:{value:0},                 // always UV for the plate
+  uTriScale:{value:new THREE.Vector2(0.01,0.01)},
+  uTriOff:{value:new THREE.Vector2(0,0)},
+  uTexOpacity:{value:1.0},
+  uTexBlur:{value:0.0},
+};
+function makeGroundTex(){
+  if(!surfaceTex||!surfaceTex.image){groundTex=null;return;}
+  if(groundTex)groundTex.dispose();
+  groundTex=surfaceTex.clone();
+  groundTex.wrapS=groundTex.wrapT=THREE.ClampToEdgeWrapping; // no tiling on the plate
+  groundTex.colorSpace=THREE.SRGBColorSpace;
+  groundTex.needsUpdate=true;
+  applyGroundTexFit();
+}
+function applyGroundTexFit(){
+  if(!groundTex||!groundTex.image)return;
+  // cover-fit onto the square plate. center=(0.5,0.5) makes the repeat scale around
+  // the middle, so NO offset is needed — adding one shifts the image off-centre.
+  const iw=groundTex.image.width||1, ih=groundTex.image.height||1;
+  const ar=iw/ih;
+  groundTex.center.set(0.5,0.5);
+  groundTex.rotation=0;
+  groundTex.offset.set(0,0);
+  if(ar>=1){ groundTex.repeat.set(1/ar,1); }
+  else     { groundTex.repeat.set(1,ar);   }
+  groundTex.matrixAutoUpdate=true;
+  groundTex.updateMatrix();
+  groundTex.needsUpdate=true;
+  groundUniforms.uTexOpacity.value=texState.opacity/100;
+  groundUniforms.uTexBlur.value=(texState.blur/100)*0.02;
+}
+// inject multi-mode mapping (+ blur + opacity) into a material's shader.
+// uni = the uniform set to bind (texUniforms for the shape, groundUniforms for the plate)
+function patchMaterialMapping(mat,uni){
+  uni=uni||texUniforms;
+  mat.onBeforeCompile=(shader)=>{
+    shader.uniforms.uMapMode=uni.uMapMode;
+    shader.uniforms.uTriScale=uni.uTriScale;
+    shader.uniforms.uTriOff=uni.uTriOff;
+    shader.uniforms.uTexOpacity=uni.uTexOpacity;
+    shader.uniforms.uTexBlur=uni.uTexBlur;
+    shader.vertexShader=shader.vertexShader
+      .replace('#include <common>','#include <common>\nvarying vec3 vTriPos;\nvarying vec3 vTriNrm;\nvarying vec4 vClip;')
+      .replace('#include <begin_vertex>','#include <begin_vertex>\n  vTriPos=position;\n  vTriNrm=normal;')
+      .replace('#include <project_vertex>','#include <project_vertex>\n  vClip=gl_Position;');
+    shader.fragmentShader=shader.fragmentShader
+      .replace('#include <common>','#include <common>\nvarying vec3 vTriPos;\nvarying vec3 vTriNrm;\nvarying vec4 vClip;\nuniform int uMapMode;\nuniform vec2 uTriScale;\nuniform vec2 uTriOff;\nuniform float uTexOpacity;\nuniform float uTexBlur;')
+      .replace('#include <map_fragment>',`#ifdef USE_MAP
+  vec4 sampledDiffuseColor;
+  {
+    vec2 uv;
+    vec3 n=normalize(vTriNrm);
+    bool tri=(uMapMode==1);
+    if(uMapMode==2){
+      vec3 d=normalize(vTriPos);
+      uv=vec2(atan(d.z,d.x)*0.159155+0.5, asin(clamp(d.y,-1.0,1.0))*0.318310+0.5)*uTriScale*40.0+uTriOff;
+    } else if(uMapMode==3){
+      vec2 ndc=vClip.xy/vClip.w;
+      uv=ndc*0.5*uTriScale*40.0+0.5+uTriOff;
+    } else if(!tri){
+      uv=vMapUv;
+    }
+    vec4 acc=vec4(0.0); float b=uTexBlur;
+    if(b<=0.0001){
+      if(tri){
+        vec3 bw=abs(n); bw/=(bw.x+bw.y+bw.z)+1e-5;
+        acc=texture2D(map,vTriPos.zy*uTriScale+uTriOff)*bw.x
+           +texture2D(map,vTriPos.xz*uTriScale+uTriOff)*bw.y
+           +texture2D(map,vTriPos.xy*uTriScale+uTriOff)*bw.z;
+      } else { acc=texture2D(map,uv); }
+      sampledDiffuseColor=acc;
+    } else {
+      if(tri){
+        vec3 bw=abs(n); bw/=(bw.x+bw.y+bw.z)+1e-5;
+        for(int i=-1;i<=1;i++)for(int j=-1;j<=1;j++){
+          vec2 o=vec2(float(i),float(j))*b;
+          acc+=(texture2D(map,vTriPos.zy*uTriScale+uTriOff+o)*bw.x
+               +texture2D(map,vTriPos.xz*uTriScale+uTriOff+o)*bw.y
+               +texture2D(map,vTriPos.xy*uTriScale+uTriOff+o)*bw.z);
+        }
+      } else {
+        for(int i=-1;i<=1;i++)for(int j=-1;j<=1;j++){
+          acc+=texture2D(map,uv+vec2(float(i),float(j))*b);
+        }
+      }
+      sampledDiffuseColor=acc/9.0;
+    }
+  }
+  diffuseColor.rgb=mix(diffuseColor.rgb, sampledDiffuseColor.rgb, uTexOpacity);
+#endif`);
+  };
+  mat.customProgramCacheKey=()=>'mapmode-v2';
+  return mat;
+}
+
+function makeMaterial(colorHex){
+  const col=new THREE.Color(colorHex);
+  const s=(state.surf==null?30:state.surf)/100; // 0 = glatt/spiegelnd … 1 = matt
+  const ei=(state.envInt==null?100:state.envInt)/100; // environment / reflection strength
+  const map=surfaceTex||null;
+  // With a texture, our shader mixes texture OVER the base colour by opacity, so the
+  // base colour must be the real chosen colour (not white) for transparency to read.
+  let mat;
+  if(state.look==='glass'){
+    mat=new THREE.MeshPhysicalMaterial({color:col.clone().lerp(new THREE.Color('#ffffff'),0.45),map,
+      transmission:map?0.0:1.0,thickness:1.4,roughness:0.03+s*0.5,ior:1.45,metalness:0,
+      iridescence:0.5,iridescenceIOR:1.3,clearcoat:0.6,clearcoatRoughness:0.15,
+      envMapIntensity:1.3*ei,transparent:!map,specularIntensity:1.0});
+  } else if(state.look==='clay'){
+    mat=new THREE.MeshPhysicalMaterial({color:col,map,roughness:0.45+s*0.5,metalness:0.0,
+      clearcoat:0.18,clearcoatRoughness:0.55,sheen:0.5,sheenColor:col.clone().lerp(new THREE.Color('#fff'),0.5),
+      envMapIntensity:0.55*ei});
+  } else if(state.look==='chrome'){
+    mat=new THREE.MeshStandardMaterial({color:col.clone().lerp(new THREE.Color('#ffffff'),0.3),map,
+      roughness:0.04+s*0.55,metalness:map?0.55:1.0,envMapIntensity:1.6*ei});
+  } else {
+    mat=new THREE.MeshStandardMaterial({color:col,map,roughness:0.35+s*0.45,metalness:0.0,
+      emissive:map?new THREE.Color('#000'):col.clone().multiplyScalar(0.55),emissiveIntensity:map?0.0:0.9,envMapIntensity:0.25*ei});
+  }
+  if(map)patchMaterialMapping(mat);
+  return mat;
+}
+
+function disposeMeshes(){
+  meshes.forEach(m=>{m.geometry.dispose();m.material.dispose();group.remove(m);});
+  meshes=[];
+}
+
+// ---- shared geometry helpers ----
+function combined2DBox(shapes){
+  let minx=Infinity,miny=Infinity,maxx=-Infinity,maxy=-Infinity;
+  shapes.forEach(sh=>{sh.getPoints(32).forEach(p=>{if(p.x<minx)minx=p.x;if(p.y<miny)miny=p.y;if(p.x>maxx)maxx=p.x;if(p.y>maxy)maxy=p.y;});});
+  return {minx,miny,maxx,maxy,cx:(minx+maxx)/2,cy:(miny+maxy)/2,w:maxx-minx,h:maxy-miny};
+}
+function plateRect(b,pad){
+  const s=new THREE.Shape();
+  const x0=b.minx-pad,y0=b.miny-pad,x1=b.maxx+pad,y1=b.maxy+pad,r=Math.min(x1-x0,y1-y0)*0.05;
+  s.moveTo(x0+r,y0);s.lineTo(x1-r,y0);s.absellipse(x1-r,y0+r,r,r,-Math.PI/2,0,false);
+  s.lineTo(x1,y1-r);s.absellipse(x1-r,y1-r,r,r,0,Math.PI/2,false);
+  s.lineTo(x0+r,y1);s.absellipse(x0+r,y1-r,r,r,Math.PI/2,Math.PI,false);
+  s.lineTo(x0,y0+r);s.absellipse(x0+r,y0+r,r,r,Math.PI,Math.PI*1.5,false);
+  s.closePath();return s;
+}
+function localBBox(){
+  const box=new THREE.Box3();
+  meshes.forEach(m=>{m.geometry.computeBoundingBox();const bb=m.geometry.boundingBox;
+    box.expandByPoint(bb.min);box.expandByPoint(bb.max);});
+  return box;
+}
+
+let fitW=1,fitH=1; // 2D extent (svg units) that should stay framed
+function fitScale(){
+  // Use a FIXED reference distance, not the live cam.radius. Otherwise every
+  // rebuild (e.g. switching look) re-fits against the current zoom and the shape
+  // appears to jump. Zoom is handled purely by moving the camera.
+  const dist=cam.restRadius;
+  const visH=2*dist*Math.tan(THREE.MathUtils.degToRad(camera.fov)/2);
+  const visW=visH*camera.aspect;
+  const margin=0.8;
+  return Math.min((visW*margin)/(fitW||1),(visH*margin)/(fitH||1));
+}
+function applyRotation(){
+  pivot.rotation.set(
+    THREE.MathUtils.degToRad(state.rotX),
+    THREE.MathUtils.degToRad(state.rotY),
+    THREE.MathUtils.degToRad(state.rotZ)
+  );
+}
+function layoutGroup(){
+  if(!meshes.length)return;
+  const f=fitScale();
+  group.scale.set(f,-f,f); // y flipped: SVG coord space is y-down
+}
+
+// ---- shared extrude + shading helpers ----
+// High curve resolution kills the facetted "steps"; bevel segments scale with the
+// bevel slider so rounding is smooth. reliefScale lets emboss/deboss size the bevel
+// against the relief depth rather than the extrude depth.
+function extrudeSettings(depth,bevelFrac,reliefScale){
+  const bevelOn=bevelFrac>0;
+  const ref=reliefScale!=null?reliefScale:depth;
+  const segs=bevelOn?Math.max(3,Math.round(2+bevelFrac*10)):0; // 3..12 with slider
+  return {depth,bevelEnabled:bevelOn,
+    bevelThickness:ref*bevelFrac*0.5,
+    bevelSize:ref*bevelFrac*0.45,
+    bevelSegments:segs,curveSegments:64};
+}
+// Extrude output has DUPLICATE verts along curved walls, so computeVertexNormals
+// alone leaves hard facets. Welding coincident verts into a shared index lets the
+// normals average across the curve → true smooth shading. For the faceted look we
+// skip welding and force material.flatShading instead.
+function weldByPosition(geo,tol=1e-3){
+  const pos=geo.getAttribute('position');const map=new Map();const remap=new Int32Array(pos.count);
+  const newPos=[];let next=0;const q=v=>Math.round(v/tol);
+  for(let i=0;i<pos.count;i++){const x=pos.getX(i),y=pos.getY(i),z=pos.getZ(i);
+    const key=q(x)+'_'+q(y)+'_'+q(z);let idx=map.get(key);
+    if(idx===undefined){idx=next++;map.set(key,idx);newPos.push(x,y,z);}remap[i]=idx;}
+  const out=new THREE.BufferGeometry();
+  out.setAttribute('position',new THREE.Float32BufferAttribute(newPos,3));
+  out.setIndex(Array.from(remap));out.computeVertexNormals();return out;
+}
+function applyShading(geo){
+  if(state.shading==='flat'){geo.computeVertexNormals();return geo;} // keep split verts → facets
+  return weldByPosition(geo);                                         // weld → smooth
+}
+
+// ---- variant A: free-standing extruded shapes ----
+function buildFree(groups){
+  disposeMeshes();
+  const settings=extrudeSettings(state.depth,state.bevel/100);
+  const built=[];
+  groups.forEach((shapes,idx)=>{
+    let geo;try{geo=new THREE.ExtrudeGeometry(shapes,settings);}catch(e){return;}
+    geo=applyShading(geo);
+    const colHex=state.colorMode==='palette'?PALETTE[idx%PALETTE.length]:state.color;
+    const mesh=new THREE.Mesh(geo,makeMaterial(colHex));
+    mesh.material.flatShading=(state.shading==='flat');
+    group.add(mesh);meshes.push(mesh);built.push(mesh);
+  });
+  if(!built.length)return;
+  const box=localBBox();const size=new THREE.Vector3();box.getSize(size);const c=new THREE.Vector3();box.getCenter(c);
+  built.forEach((m,i)=>m.position.set(-c.x,-c.y,-c.z+i*state.spread));
+  fitW=size.x;fitH=size.y;layoutGroup();
+}
+
+// ---- variant B: shape embossed (raised) / debossed (recessed) in a plate ----
+function buildEmbossed(groups,mode){
+  disposeMeshes();
+  const allShapes=[];groups.forEach(g=>g.forEach(s=>allShapes.push(s)));
+  if(!allShapes.length)return;
+  const box=combined2DBox(allShapes);
+  const maxDim=Math.max(box.w,box.h)||1;
+  // plate padding: slider 0..100 → 0.3x .. 8x of the shape size; "infinite" overrides huge
+  const plateF=0.3+(state.plate/100)*7.7;
+  const pad=state.infinite?maxDim*14:maxDim*plateF;
+  const relief=(state.pdepth/100)*maxDim*0.20;        // raise / recess depth — reaches true 0
+  const pd=Math.max(relief+maxDim*0.10+6,6);          // plate thickness stays > 0 even at relief 0
+  const bevelFrac=state.bevel/100;
+  const colHex=state.colorMode==='single'?state.color:PALETTE[0];
+  const mat=makeMaterial(colHex);
+  const flat=(state.shading==='flat');
+
+  if(mode==='emboss'){
+    const base=new THREE.ExtrudeGeometry(plateRect(box,pad),{depth:pd,bevelEnabled:false,curveSegments:8});
+    const baseMesh=new THREE.Mesh(base,mat);baseMesh.material.flatShading=flat;
+    baseMesh.position.set(-box.cx,-box.cy,-pd); group.add(baseMesh);meshes.push(baseMesh);
+    let sg=new THREE.ExtrudeGeometry(allShapes,extrudeSettings(relief,bevelFrac,relief));
+    sg=applyShading(sg);
+    const sMesh=new THREE.Mesh(sg,mat.clone());sMesh.material.flatShading=flat;
+    sMesh.position.set(-box.cx,-box.cy,0); group.add(sMesh);meshes.push(sMesh); // rises toward camera
+  } else { // deboss
+    const front=plateRect(box,pad);
+    allShapes.forEach(sh=>{const h=new THREE.Path();h.curves=sh.curves.slice();front.holes.push(h);});
+    let fg=new THREE.ExtrudeGeometry(front,extrudeSettings(pd,bevelFrac,relief));
+    fg=applyShading(fg);
+    const fMesh=new THREE.Mesh(fg,mat);fMesh.material.flatShading=flat;
+    fMesh.position.set(-box.cx,-box.cy,-pd); group.add(fMesh);meshes.push(fMesh); // front face at z=0
+    const floor=new THREE.ExtrudeGeometry(plateRect(box,pad),{depth:pd,bevelEnabled:false,curveSegments:8});
+    const flMesh=new THREE.Mesh(floor,mat.clone());flMesh.material.flatShading=flat;
+    flMesh.position.set(-box.cx,-box.cy,-pd-relief); group.add(flMesh);meshes.push(flMesh); // recess floor
+  }
+  // frame on the shape extent, not the (possibly huge) plate
+  fitW=box.w*1.14;fitH=box.h*1.14;layoutGroup();
+}
+
+// ---- coloured accent lights ----
+// live-update reflection strength without rebuilding geometry
+function updateEnv(){
+  const base={glass:1.3,clay:0.55,chrome:1.6,gradient:0.25}[state.look]||0.5;
+  const ei=state.envInt/100;
+  meshes.forEach(m=>{if(m.material&&'envMapIntensity'in m.material){m.material.envMapIntensity=base*ei;m.material.needsUpdate=true;}});
+}
+function lightPos(angDeg,elevDeg,dist){
+  const a=angDeg*Math.PI/180, e=elevDeg*Math.PI/180;
+  return [dist*Math.cos(e)*Math.sin(a), dist*Math.sin(e), dist*Math.cos(e)*Math.cos(a)];
+}
+function applyLights(){
+  amb.intensity=state.ambient/100*1.2;
+  key.intensity=state.keyInt/100*2.4;
+  rim.intensity=state.keyInt/100*1.1;
+  accentA.color.set(state.accentA);accentA.intensity=state.accentAInt/100*14;
+  accentB.color.set(state.accentB);accentB.intensity=state.accentBInt/100*14;
+  const dist=6.5;
+  const pa=lightPos(state.accentAAng,state.accentAElev,dist);accentA.position.set(pa[0],pa[1],pa[2]);
+  const pb=lightPos(state.accentBAng,state.accentBElev,dist);accentB.position.set(pb[0],pb[1],pb[2]);
+}
+
+// ---- standalone ground/backdrop plate (works in ALL modes) ----
+let groundMesh=null;
+function makeGroundMaterial(){
+  // The plate uses its OWN texture (cover-fit, planar) + its own uniforms, so it
+  // reads as a flat backdrop image regardless of the shape's mapping mode.
+  const col=new THREE.Color(state.colorMode==='single'?state.color:PALETTE[1]);
+  const s=state.surf/100, ei=state.envInt/100;
+  const useTex=state.groundTex&&groundTex;
+  const map=useTex?groundTex:null;
+  let mat;
+  if(state.look==='chrome'){
+    mat=new THREE.MeshStandardMaterial({color:col.clone().lerp(new THREE.Color('#fff'),0.3),map,roughness:0.1+s*0.5,metalness:map?0.4:1.0,envMapIntensity:1.6*ei});
+  }else if(state.look==='glass'){
+    mat=new THREE.MeshPhysicalMaterial({color:col.clone().lerp(new THREE.Color('#fff'),0.4),map,roughness:0.1+s*0.5,metalness:0,clearcoat:0.4,envMapIntensity:1.0*ei});
+  }else if(state.look==='gradient'){
+    mat=new THREE.MeshStandardMaterial({color:col,map,roughness:0.5,metalness:0,emissive:map?new THREE.Color('#000'):col.clone().multiplyScalar(0.4),emissiveIntensity:map?0:0.7});
+  }else{ // clay
+    mat=new THREE.MeshStandardMaterial({color:col,map,roughness:0.6+s*0.3,metalness:0,envMapIntensity:0.5*ei});
+  }
+  if(map)patchMaterialMapping(mat,groundUniforms);
+  return mat;
+}
+function buildGround(){
+  if(groundMesh){groundMesh.geometry.dispose();groundMesh.material.dispose();scene.remove(groundMesh);groundMesh=null;}
+  if(!state.ground)return;
+  const size=8*(state.groundSize/100);   // half-extent in view units
+  const geo=new THREE.PlaneGeometry(size*2,size*2,1,1);
+  groundMesh=new THREE.Mesh(geo,makeGroundMaterial());
+  positionGround();
+  scene.add(groundMesh);
+}
+function positionGround(){
+  if(!groundMesh)return;
+  const d=state.groundDist/100*6;        // distance behind / below the shape
+  if(state.groundOrient==='floor'){
+    groundMesh.rotation.set(-Math.PI/2,0,0);
+    groundMesh.position.set(0,-d,0);
+  }else{ // wall
+    groundMesh.rotation.set(0,0,0);
+    groundMesh.position.set(0,0,-d);
+  }
+}
+
+// ---- dispatcher ----
+let currentGroups=null;
+function rebuild(){
+  if(!currentGroups)return;
+  if(state.mode==='free')buildFree(currentGroups);
+  else buildEmbossed(currentGroups,state.mode);
+  buildGround();
+}
+function setGroups(groups){currentGroups=groups;rebuild();}
+
+/* ---- load helpers ---- */
+function loadSVGText(txt){
+  const err=document.getElementById('err');err.style.display='none';
+  try{ setGroups(parseSVG(txt)); }
+  catch(e){ err.textContent=e.message; err.style.display='block'; }
+}
+
+/* ============================================================
+   4 · CAMERA CONTROL — orbit (1 finger / drag), pinch+wheel zoom,
+   two-finger pan, damping, idle auto-orbit, double-tap reset
+   ============================================================ */
+const dom=renderer.domElement;
+dom.style.touchAction='none';
+const pointers=new Map();
+let pinchPrev=0, panPrev=null, lastInteract=performance.now(), downX=0,downY=0,lastTap=0;
+
+function midpoint(){const a=[...pointers.values()];return {x:(a[0].x+a[1].x)/2,y:(a[0].y+a[1].y)/2};}
+function pinchDist(){const a=[...pointers.values()];return Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);}
+
+dom.addEventListener('pointerdown',e=>{
+  pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  lastInteract=performance.now(); downX=e.clientX; downY=e.clientY;
+  if(pointers.size===2){pinchPrev=pinchDist();panPrev=midpoint();}
+  if(dom.setPointerCapture)try{dom.setPointerCapture(e.pointerId);}catch(_){}
+});
+window.addEventListener('pointermove',e=>{
+  if(!pointers.has(e.pointerId))return;
+  const prev=pointers.get(e.pointerId);
+  const dx=e.clientX-prev.x, dy=e.clientY-prev.y;
+  pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  lastInteract=performance.now();
+  if(pointers.size===1){
+    const s=0.0052; // fixed, comfortable orbit sensitivity (independent of idle-drift speed)
+    cam.theta-=dx*s; cam.phi-=dy*s;
+    cam.phi=Math.max(0.18,Math.min(Math.PI-0.18,cam.phi));
+  } else if(pointers.size===2){
+    const d=pinchDist(); if(pinchPrev>0){cam.radius*=pinchPrev/d; cam.radius=Math.max(0.8,Math.min(28,cam.radius));} pinchPrev=d;
+    const mp=midpoint();
+    if(panPrev){ panBy(mp.x-panPrev.x, mp.y-panPrev.y); } panPrev=mp;
+  }
+});
+function panBy(dx,dy){
+  const k=cam.radius*0.0016;
+  const right=new THREE.Vector3(),up=new THREE.Vector3();
+  camera.matrixWorld.extractBasis(right,up,new THREE.Vector3());
+  cam.target.addScaledVector(right,-dx*k);
+  cam.target.addScaledVector(up, dy*k);
+}
+function endPtr(e){
+  pointers.delete(e.pointerId);
+  if(pointers.size<2){pinchPrev=0;panPrev=null;}
+  const moved=Math.hypot(e.clientX-downX,e.clientY-downY), now=Date.now();
+  if(moved<6 && now-lastTap<320) resetView();
+  lastTap=now;
+}
+window.addEventListener('pointerup',endPtr);
+window.addEventListener('pointercancel',endPtr);
+dom.addEventListener('wheel',e=>{e.preventDefault();
+  cam.radius*=1+Math.sign(e.deltaY)*0.08; cam.radius=Math.max(0.8,Math.min(28,cam.radius));
+  lastInteract=performance.now();
+},{passive:false});
+
+function resetView(){
+  cam.theta=cam.restTheta; cam.phi=cam.restPhi; cam.radius=cam.restRadius; cam.target.set(0,0,0);
+}
+
+/* ---- post-processing: SSAO (ambient occlusion), lazily loaded ---- */
+let composer=null,ssaoPass=null,composerReady=false,composerLoading=false;
+async function ensureComposer(){
+  if(composerReady||composerLoading)return composerReady;
+  composerLoading=true;
+  try{
+    const [{EffectComposer},{RenderPass},{GTAOPass},{OutputPass}]=await Promise.all([
+      import('three/addons/postprocessing/EffectComposer.js'),
+      import('three/addons/postprocessing/RenderPass.js'),
+      import('three/addons/postprocessing/GTAOPass.js'),
+      import('three/addons/postprocessing/OutputPass.js'),
+    ]);
+    composer=new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene,camera));
+    ssaoPass=new GTAOPass(scene,camera,window.innerWidth,window.innerHeight);
+    ssaoPass.output=GTAOPass.OUTPUT.Default;
+    composer.addPass(ssaoPass);
+    composer.addPass(new OutputPass());
+    applyAO();
+    composerReady=true;
+  }catch(e){
+    const err=document.getElementById('aoErr');
+    if(err){err.textContent='AO-Module nicht erreichbar (Internet?). Rest funktioniert weiter.';err.style.display='block';}
+    state.ao=false;const sw=document.getElementById('aoSwitch');if(sw)sw.classList.remove('on');
+  }
+  composerLoading=false;
+  return composerReady;
+}
+function applyAO(){
+  if(!ssaoPass)return;
+  // GTAO works in view-space. The shape spans ~4 units; relief depth is only
+  // ~0.1..0.9 units, so the AO radius must be on THAT scale to catch edges sharply
+  // instead of smearing across the whole form. blendIntensity is a real strength dial.
+  ssaoPass.blendIntensity=state.aoStrength/100*2.2;
+  if(ssaoPass.updateGtaoMaterial){
+    ssaoPass.updateGtaoMaterial({
+      radius:0.05+(state.aoRadius/24)*0.9,  // 0.05 .. 0.95 view units (≈ relief scale)
+      distanceExponent:1.0,
+      thickness:0.4,
+      scale:1.0,
+      samples:16,
+    });
+  }
+}
+
+const clock=new THREE.Clock();
+function animate(){
+  requestAnimationFrame(animate);
+  const t=clock.getElapsedTime();
+  bgUniforms.uTime.value=t;
+  // idle auto-orbit + breathing when untouched
+  const idle=(performance.now()-lastInteract)>2200;
+  if(idle && state.drift && pointers.size===0){
+    cam.theta+=0.0012*(0.4+state.parallax/100);
+  }
+  const breathe=(state.drift?Math.sin(t*0.4)*0.015:0);
+  // optional slow orbit of accent lights
+  if(state.lightOrbit){
+    const da=Math.sin(t*0.25)*60, db=Math.cos(t*0.22)*60;
+    const dist=6.5;
+    const pa=lightPos(state.accentAAng+da,state.accentAElev,dist);accentA.position.set(pa[0],pa[1],pa[2]);
+    const pb=lightPos(state.accentBAng+db,state.accentBElev,dist);accentB.position.set(pb[0],pb[1],pb[2]);
+  }
+  // damping toward targets
+  cam.cTheta+=(cam.theta-cam.cTheta)*0.1;
+  cam.cPhi+=((cam.phi+breathe)-cam.cPhi)*0.1;
+  cam.cRadius+=(cam.radius-cam.cRadius)*0.1;
+  cam.cTarget.lerp(cam.target,0.1);
+  applyCam();
+  if(state.ao&&composerReady){composer.render();}
+  else{renderer.render(scene,camera);}
+}
+
+window.addEventListener('resize',()=>{
+  camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth,window.innerHeight);
+  if(composer)composer.setSize(window.innerWidth,window.innerHeight);
+  if(ssaoPass)ssaoPass.setSize(window.innerWidth,window.innerHeight);
+  layoutGroup();
+});
+
+/* ============================================================
+   5 · UI WIRING
+   ============================================================ */
+const $=id=>document.getElementById(id);
+// presets
+const presetsEl=$('presets');
+Object.keys(PRESETS).forEach((name,i)=>{
+  const b=document.createElement('button');b.className='chip';b.textContent=name;
+  b.onclick=()=>{$('svgInput').value='';loadSVGText(PRESETS[name]);};
+  presetsEl.appendChild(b);
+});
+// HDR environment presets
+const hdrEl=$('hdrPresets');
+Object.keys(HDR_PRESETS).forEach((key)=>{
+  const b=document.createElement('button');b.className='chip'+(key==='studio'?' on':'');b.textContent=HDR_PRESETS[key].label;
+  b.onclick=()=>{document.querySelectorAll('#hdrPresets .chip').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+    setProceduralHDR(key);updateEnv();};
+  hdrEl.appendChild(b);
+});
+$('hdrFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;
+  document.querySelectorAll('#hdrPresets .chip').forEach(x=>x.classList.remove('on'));
+  loadHDRFile(f);updateEnv();});
+// palette swatches
+const palEl=$('palette');
+const allColors=['palette',...PALETTE];
+allColors.forEach((c,i)=>{
+  const s=document.createElement('div');s.className='swatch'+(i===0?' on':'');
+  if(c==='palette'){s.style.background='conic-gradient(from 0deg,#8af7d2,#7cb8ff,#ff9ecb,#ffd166,#c5a3ff,#8af7d2)';s.title='Auto-Palette';}
+  else{s.style.background=c;s.title=c;}
+  s.onclick=()=>{document.querySelectorAll('#palette .swatch').forEach(x=>x.classList.remove('on'));s.classList.add('on');
+    if(c==='palette'){state.colorMode='palette';}else{state.colorMode='single';state.color=c;}
+    if(currentGroups)rebuild();};
+  palEl.appendChild(s);
+});
+// background sets
+const bgEl=$('bgpresets');
+BG_SETS.forEach((set,i)=>{
+  const s=document.createElement('div');s.className='swatch'+(i===0?' on':'');
+  s.style.background=`linear-gradient(135deg,${set.a},${set.c})`;s.title=set.name;
+  s.onclick=()=>{document.querySelectorAll('#bgpresets .swatch').forEach(x=>x.classList.remove('on'));s.classList.add('on');
+    bgUniforms.uA.value.set(set.a);bgUniforms.uB.value.set(set.b);bgUniforms.uC.value.set(set.c);
+    $('bgColTop').value=set.a;$('bgColMid').value=set.b;$('bgColBot').value=set.c;};
+  bgEl.appendChild(s);
+});
+// custom shape colour
+$('customColor').addEventListener('input',e=>{
+  const v=e.target.value;state.colorMode='single';state.color=v;
+  $('customColorHex').textContent=v;
+  document.querySelectorAll('#palette .swatch').forEach(x=>x.classList.remove('on'));
+  if(currentGroups)rebuild();
+});
+// custom background gradient stops
+$('bgColTop').addEventListener('input',e=>{bgUniforms.uA.value.set(e.target.value);
+  document.querySelectorAll('#bgpresets .swatch').forEach(x=>x.classList.remove('on'));});
+$('bgColMid').addEventListener('input',e=>{bgUniforms.uB.value.set(e.target.value);
+  document.querySelectorAll('#bgpresets .swatch').forEach(x=>x.classList.remove('on'));});
+$('bgColBot').addEventListener('input',e=>{bgUniforms.uC.value.set(e.target.value);
+  document.querySelectorAll('#bgpresets .swatch').forEach(x=>x.classList.remove('on'));});
+// texture upload + transform
+$('texFile').addEventListener('change',e=>{const f=e.target.files[0];if(f)loadTextureFile(f);});
+$('texClearBtn').onclick=()=>clearTexture();
+$('mapModes').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  document.querySelectorAll('#mapModes .opt').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  texState.mode=b.dataset.mapmode;applyTexTransform();});
+bindSlider('texScale','vTexScale',v=>v+'%',v=>{texState.scale=v;applyTexTransform();});
+bindSlider('texRot','vTexRot',v=>v+'°',v=>{texState.rotation=v;applyTexTransform();});
+bindSlider('texX','vTexX',v=>v,v=>{texState.offX=v;applyTexTransform();});
+bindSlider('texY','vTexY',v=>v,v=>{texState.offY=v;applyTexTransform();});
+bindSlider('texOp','vTexOp',v=>v+'%',v=>{texState.opacity=v;applyTexTransform();});
+bindSlider('texBlur','vTexBlur',v=>v+'%',v=>{texState.blur=v;applyTexTransform();});
+// look buttons
+$('looks').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  document.querySelectorAll('#looks .opt').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  state.look=b.dataset.look;if(currentGroups)rebuild();});
+// build-mode buttons
+$('modes').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  document.querySelectorAll('#modes .opt').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  state.mode=b.dataset.mode;if(currentGroups)rebuild();});
+// shading buttons
+$('shading').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  document.querySelectorAll('#shading .opt').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  state.shading=b.dataset.shading;if(currentGroups)rebuild();});
+// infinite plate toggle
+$('infiniteToggle').onclick=()=>{state.infinite=!state.infinite;
+  $('infiniteSwitch').classList.toggle('on',state.infinite);if(currentGroups)rebuild();};
+// ground plate
+$('groundToggle').onclick=()=>{state.ground=!state.ground;
+  $('groundSwitch').classList.toggle('on',state.ground);buildGround();};
+$('groundOrient').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  document.querySelectorAll('#groundOrient .opt').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  state.groundOrient=b.dataset.orient;positionGround();});
+bindSlider('groundSize','vGroundSize',v=>v+'%',v=>{state.groundSize=v;buildGround();});
+bindSlider('groundDist','vGroundDist',v=>v+'%',v=>{state.groundDist=v;positionGround();});
+$('groundTexToggle').onclick=()=>{state.groundTex=!state.groundTex;
+  $('groundTexSwitch').classList.toggle('on',state.groundTex);buildGround();};
+// coloured lights
+$('lightAcol').addEventListener('input',e=>{state.accentA=e.target.value;applyLights();});
+$('lightBcol').addEventListener('input',e=>{state.accentB=e.target.value;applyLights();});
+bindSlider('ambient','vAmbient',v=>v+'%',v=>{state.ambient=v;applyLights();});
+bindSlider('keyInt','vKey',v=>v+'%',v=>{state.keyInt=v;applyLights();});
+bindSlider('envInt','vEnv',v=>v+'%',v=>{state.envInt=v;updateEnv();});
+$('aoToggle').onclick=async()=>{
+  state.ao=!state.ao;$('aoSwitch').classList.toggle('on',state.ao);
+  if(state.ao){$('aoErr').style.display='none';await ensureComposer();}
+};
+bindSlider('aoStrength','vAo',v=>v+'%',v=>{state.aoStrength=v;applyAO();});
+bindSlider('aoRadius','vAoR',v=>v,v=>{state.aoRadius=v;applyAO();});
+bindSlider('lightAint','vLightA',v=>v+'%',v=>{state.accentAInt=v;applyLights();});
+bindSlider('lightAang','vLightAang',v=>v+'°',v=>{state.accentAAng=v;applyLights();});
+bindSlider('lightAelev','vLightAelev',v=>v+'°',v=>{state.accentAElev=v;applyLights();});
+bindSlider('lightBint','vLightB',v=>v+'%',v=>{state.accentBInt=v;applyLights();});
+bindSlider('lightBang','vLightBang',v=>v+'°',v=>{state.accentBAng=v;applyLights();});
+bindSlider('lightBelev','vLightBelev',v=>v+'°',v=>{state.accentBElev=v;applyLights();});
+$('lightOrbitToggle').onclick=()=>{state.lightOrbit=!state.lightOrbit;
+  $('lightOrbitSwitch').classList.toggle('on',state.lightOrbit);};
+// sliders
+function bindSlider(id,label,fmt,onChange){
+  const el=$(id),out=$(label);if(!el)return;
+  const upd=()=>{const v=+el.value;if(out)out.textContent=fmt(v);onChange(v);};
+  el.addEventListener('input',upd);upd();
+}
+bindSlider('depth','vDepth',v=>v,v=>{state.depth=v;rebuild();});
+bindSlider('surf','vSurf',v=>v+'%',v=>{state.surf=v;if(currentGroups)rebuild();});
+bindSlider('bevel','vBevel',v=>v+'%',v=>{state.bevel=v;rebuild();});
+bindSlider('spread','vSpread',v=>v,v=>{state.spread=v;rebuild();});
+bindSlider('pdepth','vPdepth',v=>v+'%',v=>{state.pdepth=v;if(state.mode!=='free')rebuild();});
+bindSlider('plate','vPlate',v=>v+'%',v=>{state.plate=v;if(state.mode!=='free')rebuild();});
+bindSlider('tilt','vTilt',v=>v+'°',v=>{state.tilt=v;const el=(90-v)*Math.PI/180;cam.phi=el;cam.restPhi=el;});
+bindSlider('rotX','vRotX',v=>v+'°',v=>{state.rotX=v;applyRotation();});
+bindSlider('rotY','vRotY',v=>v+'°',v=>{state.rotY=v;applyRotation();});
+bindSlider('rotZ','vRotZ',v=>v+'°',v=>{state.rotZ=v;applyRotation();});
+$('resetRotBtn').onclick=()=>{
+  state.rotX=0;state.rotY=0;state.rotZ=0;applyRotation();
+  $('rotX').value=0;$('rotY').value=0;$('rotZ').value=0;
+  $('vRotX').textContent='0°';$('vRotY').textContent='0°';$('vRotZ').textContent='0°';
+};
+bindSlider('parallax','vPar',v=>v+'%',v=>{state.parallax=v;});
+// drift toggle
+$('driftToggle').onclick=()=>{state.drift=!state.drift;$('driftSwitch').classList.toggle('on',state.drift);};
+$('resetCamBtn').onclick=()=>{resetView();lastInteract=performance.now();};
+// svg paste
+let pasteTimer;
+$('svgInput').addEventListener('input',e=>{clearTimeout(pasteTimer);const v=e.target.value;
+  if(!v.trim())return;pasteTimer=setTimeout(()=>loadSVGText(v),300);});
+// file upload
+$('svgFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=()=>{$('svgInput').value='';loadSVGText(r.result);};r.readAsText(f);});
+// hide / show panel
+$('hideBtn').onclick=()=>{$('panel').classList.add('hidden');$('fab').style.display='flex';};
+$('fab').onclick=()=>{$('panel').classList.remove('hidden');$('fab').style.display='none';};
+// helper: render current frame through composer (AO) or directly
+function renderFrame(){
+  if(state.ao&&composerReady){composer.render();}
+  else{renderer.render(scene,camera);}
+}
+// export PNG (with background)
+$('exportBtn').onclick=()=>{
+  renderFrame();
+  const url=renderer.domElement.toDataURL('image/png');
+  const a=document.createElement('a');a.href=url;a.download='render-background.png';a.click();
+};
+// export transparent PNG (shape only, no background — for compositing)
+$('exportAlphaBtn').onclick=()=>{
+  const prevVis=bgSphere.visible;
+  const prevGround=groundMesh?groundMesh.visible:false;
+  bgSphere.visible=false;
+  if(groundMesh)groundMesh.visible=false; // backdrop excluded from transparent export
+  renderer.setClearColor(0x000000,0);
+  renderFrame();
+  const url=renderer.domElement.toDataURL('image/png');
+  bgSphere.visible=prevVis;
+  if(groundMesh)groundMesh.visible=prevGround;
+  renderFrame();
+  const a=document.createElement('a');a.href=url;a.download='render-shape-alpha.png';a.click();
+};
+
+/* ============================================================
+   6 · BOOT
+   ============================================================ */
+applyLights();
+loadSVGText(PRESETS.Blob);
+animate();
+setTimeout(()=>$('loading').classList.add('gone'),600);
+</script>
+</body>
+</html>
